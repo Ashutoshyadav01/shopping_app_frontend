@@ -3,7 +3,6 @@ import { View, Text, TextInput, StyleSheet, Image, FlatList, TouchableOpacity, D
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
-
 const categories = [
   { id: '1', name: 'Sweets', image: 'https://via.placeholder.com/100' },
   { id: '2', name: 'Personal Care', image: 'https://via.placeholder.com/100' },
@@ -14,27 +13,13 @@ const categories = [
 ];
 
 const screenWidth = Dimensions.get('window').width;
-const itemWidth = (screenWidth / 2) - 30; 
-const API_URL="http://akm0505.bsite.net/api/GetCategoryList?shopId=1";
-const fetchData = async () => {
-  try {
-    const response = await axios.get(API_URL);
-    console.log(response.data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
+const itemWidth = (screenWidth / 2) - 30;
+
 const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredCategories, setFilteredCategories] = useState(categories);
-  
-fetchData();
 
   const handleSearch = () => {
-    const filteredData = categories.filter(category => 
-      category.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredCategories(filteredData);
+    navigation.navigate('CategoryItems', { searchQuery });
   };
 
   return (
@@ -53,14 +38,14 @@ fetchData();
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-        <Button title='Search' color='green' onPress={handleSearch} />
+        <Button title="Search" color="green" onPress={handleSearch} />
       </View>
 
       <Text style={styles.sectionTitle}>Browse Categories</Text>
       <FlatList
-        data={filteredCategories}
+        data={categories}
         numColumns={2}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('CategoryItems', { category: item })}>
             <View style={styles.categoryItem}>
@@ -122,7 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    textDecorationLine: "underline",
+    textDecorationLine: 'underline',
   },
   flatListContent: {
     paddingHorizontal: 10,

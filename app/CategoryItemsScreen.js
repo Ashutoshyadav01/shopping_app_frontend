@@ -1,54 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
 
 const items = {
   'Sweets': [
-    { name: 'Kaju Katli', image: 'https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp' },
-    { name: 'Rasgulla', image: 'https://via.placeholder.com/100' },
-    { name: 'Gulab Jamun', image: 'https://via.placeholder.com/100' }
+    { name: 'Kaju Katli', image: 'https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp',price:"300", op:"400",discount:"20%"},
+    { name: 'Rasgulla', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
+    { name: 'Gulab Jamun', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"}
   ],
   'Personal Care': [
-    { name: 'Shampoo', image: 'https://via.placeholder.com/100' },
-    { name: 'Soap', image: 'https://via.placeholder.com/100' },
-    { name: 'Toothpaste', image: 'https://via.placeholder.com/100' }
+    { name: 'Shampoo', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
+    { name: 'Soap', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
+    { name: 'Toothpaste', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
   'Atta, Dal & Rice': [
-    { name: 'Basmati Rice', image: 'https://via.placeholder.com/100' },
-    { name: 'Chana Dal', image: 'https://via.placeholder.com/100' },
-    { name: 'Wheat Flour', image: 'https://via.placeholder.com/100' }
+    { name: 'Basmati Rice', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
+    { name: 'Chana Dal', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
+    { name: 'Wheat Flour', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
   'Hot & Cold Drinks': [
-    { name: 'Coca-Cola', image: 'https://via.placeholder.com/100' },
-    { name: 'Maaza', image: 'https://via.placeholder.com/100' },
+    { name: 'Coca-Cola', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
+    { name: 'Maaza', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Coffee', image: 'https://via.placeholder.com/100' }
   ],
   'Chips & Munchies': [
-    { name: 'Lays', image: 'https://via.placeholder.com/100' },
-    { name: 'KurKure', image: 'https://via.placeholder.com/100' },
-    { name: 'Pringles', image: 'https://via.placeholder.com/100' }
+    { name: 'Lays', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
+    { name: 'KurKure', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
+    { name: 'Pringles', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
   'Fruits & Vegetables': [
-    { name: 'Apples', image: 'https://via.placeholder.com/100' },
-    { name: 'Bananas', image: 'https://via.placeholder.com/100' },
-    { name: 'Tomatoes', image: 'https://via.placeholder.com/100' }
+    { name: 'Apples', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
+    { name: 'Bananas', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
+    { name: 'Tomatoes', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
 };
 
 const CategoryItemsScreen = ({ route, navigation }) => {
-  const { category } = route.params;
+  const { searchQuery, category } = route.params;
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      const results = [];
+      Object.keys(items).forEach(categoryName => {
+        const matchingItems = items[categoryName].filter(item =>
+          item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        if (matchingItems.length > 0) {
+          results.push(...matchingItems);
+        }
+      });
+      setFilteredItems(results);
+    } else if (category) {
+      setFilteredItems(items[category.name]);
+    }
+  }, [searchQuery, category]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{category.name}</Text>
+      <Text style={styles.title}>
+        {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
+      </Text>
       
       <FlatList
-        data={items[category.name]}
+        data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('ProductDetails', { item })}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate('ProductDetails', { item })}>
             <View style={styles.itemContainer}>
               <Image source={{ uri: item.image }} style={styles.itemImage} />
               <Text style={styles.itemText}>{item.name}</Text>
@@ -71,23 +88,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  itemImage: {
+    width: 100,  // Ensure width is set
+    height: 100, // Ensure height is set
+    marginRight: 10,
+    borderRadius: 8,  // Optional: to make images rounded
+    marginTop:10
+  },
+  itemText:{
+    margin:"auto",
+    marginLeft:0
+  },
+
   itemContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    backgroundColor: '#f8f8f8',
-    marginBottom: 10,
-    borderRadius: 10,
-  },
-  itemImage: {
-    width: 80,
-    height: 80,
-    marginRight: 15,
-    borderRadius: 10,
-  },
-  itemText: {
-    fontSize: 18,
-  },
-});
+  }
+}
+)
 
 export default CategoryItemsScreen;
