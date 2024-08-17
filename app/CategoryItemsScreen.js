@@ -2,37 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const items = {
-  'Sweets': [
+  1: [
     { name: 'Kaju Katli', image: 'https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp',price:"300", op:"400",discount:"20%"},
     { name: 'Rasgulla', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Gulab Jamun', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"}
   ],
-  'Personal Care': [
+  2: [
     { name: 'Shampoo', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
     { name: 'Soap', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Toothpaste', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
-  'Atta, Dal & Rice': [
+  3: [
     { name: 'Basmati Rice', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Chana Dal', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Wheat Flour', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
-  'Hot & Cold Drinks': [
+  4: [
     { name: 'Coca-Cola', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Maaza', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" },
     { name: 'Coffee', image: 'https://via.placeholder.com/100' }
   ],
-  'Chips & Munchies': [
+  5: [
     { name: 'Lays', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
     { name: 'KurKure', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
     { name: 'Pringles', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
-  'Fruits & Vegetables': [
+  6: [
     { name: 'Apples', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
     { name: 'Bananas', image: 'https://via.placeholder.com/100' ,price:"300", op:"400",discount:"20%"},
     { name: 'Tomatoes', image: 'https://via.placeholder.com/100',price:"300", op:"400",discount:"20%" }
   ],
 };
+
+const subcategory=
+[
+{
+  id:"7", p_category:"1",name:"rasgulla", image:"'https://via.placeholder.com/100"
+},
+{
+  id:"8", p_category:"3",name:"Pulses", image:"'https://via.placeholder.com/100"
+},
+{
+  id:"9", p_category:"3",name:"Rice", image:"'https://via.placeholder.com/100"
+},
+{
+  id:"10", p_category:"3",name:"atta", image:"'https://via.placeholder.com/100"
+}
+]
 
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
@@ -51,7 +67,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       });
       setFilteredItems(results);
     } else if (category) {
-      setFilteredItems(items[category.name]);
+      setFilteredItems(items[category.id]);
     }
   }, [searchQuery, category]);
 

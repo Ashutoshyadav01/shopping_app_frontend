@@ -4,13 +4,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
 const categories = [
-  { id: '1', name: 'Sweets', image: 'https://via.placeholder.com/100' },
-  { id: '2', name: 'Personal Care', image: 'https://via.placeholder.com/100' },
+  { id: '1', name: 'Sweets', image: 'https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp' },
+  { id: '2', name: 'Personal Care', image: 'https://img.cdnx.in/358917/Personal-1714078843227.jpeg?width=384&format=webp' },
   { id: '3', name: 'Atta, Dal & Rice', image: 'https://img.cdnx.in/358917/AttaDalRice-1714078634647.jpeg?width=384&format=webp' },
   { id: '4', name: 'Hot & Cold Drinks', image: 'https://img.cdnx.in/358917/juices-1714080547337.jpeg?width=384&format=webp' },
-  { id: '5', name: 'Chips & Munchies', image: 'https://via.placeholder.com/100' },
-  { id: '6', name: 'Fruits & Vegetables', image: 'https://via.placeholder.com/100' },
+  { id: '5', name: 'Chips & Munchies', image: 'https://img.cdnx.in/358917/chips-1714080381101.jpeg?width=384&format=webp' },
+  { id: '6', name: 'Fruits & Vegetables', image: 'https://img.cdnx.in/358917/fruits-1714078734107.jpeg?width=384&format=webp' },
 ];
+
 
 const screenWidth = Dimensions.get('window').width;
 const itemWidth = (screenWidth / 2) - 30;
