@@ -170,7 +170,7 @@ function SearchItems({ navigation, route }) {
 
   return (
     <View style={{ padding: 16 }}>
-     {count}{count>1?" items found ":"item found"} {count > 0 ? (
+     <Text>{count}{count>1?" items found ":"item found"}</Text>{count > 0 ? (
         <FlatList
           data={filteredItems}
           keyExtractor={(item, index) => index.toString()}

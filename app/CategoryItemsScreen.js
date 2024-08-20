@@ -192,7 +192,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 
       <FlatList
         data={sub_cat}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item,index) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
             <Button title={item.name} onPress={manage(item.name)} />
