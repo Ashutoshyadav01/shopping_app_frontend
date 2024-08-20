@@ -50,7 +50,21 @@ const items = {
       discount: "20%",
     },
     {
-      name: "Toothpaste",
+      name: "Pepsodent Toothpaste",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Sensodyne Toothpaste",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Colgate Toothbrush",
       image: "https://via.placeholder.com/100",
       price: "300",
       op: "400",
@@ -60,6 +74,13 @@ const items = {
   3: [
     {
       name: "Basmati Rice",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Brown Rice",
       image: "https://via.placeholder.com/100",
       price: "300",
       op: "400",
@@ -157,6 +178,7 @@ const subcategory = [
     image: "image URL",
   },
   { id: "12", parent_category_id: 2, name: "Toothpaste", image: "image URL" },
+  { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
 ];
 
 const CategoryItemsScreen = ({ route, navigation }) => {
@@ -165,9 +187,12 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   const [count, setCount] = useState(0);
   const [subfilter, setSubfilter] = useState([]);
 
-  function manage()
-  {
- console.log(subcategory.name)
+  function handleFilter(name) {
+    const x = setFilteredItems(
+      filteredItems.filter((item) =>
+        item.name.toLowerCase().includes(name.toLowerCase())
+      )
+    );
   }
 
   useEffect(() => {
@@ -180,7 +205,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   const sub_cat = subcategory.filter(
     (item) => item.parent_category_id == category.id
   );
-  console.log(sub_cat);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -192,10 +217,10 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 
       <FlatList
         data={sub_cat}
-        keyExtractor={(item,index) => item.id.toString()}
+        keyExtractor={(item, index) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
-            <Button title={item.name} onPress={manage(item.name)} />
+            <Button title={item.name} onPress={() => handleFilter(item.name)} />
           </View>
         )}
       />
