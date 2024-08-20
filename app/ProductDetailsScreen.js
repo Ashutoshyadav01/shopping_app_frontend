@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image,Button, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { SearchBar } from 'react-native-screens';
+
 
 const ProductDetailsScreen = ({ route }) => {
   const { item } = route.params; 

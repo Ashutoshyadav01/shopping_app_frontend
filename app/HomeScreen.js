@@ -20,7 +20,7 @@ const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = () => {
-    navigation.navigate('CategoryItems', { searchQuery });
+    navigation.navigate('SearchItems', { searchQuery });
   };
 
   return (
