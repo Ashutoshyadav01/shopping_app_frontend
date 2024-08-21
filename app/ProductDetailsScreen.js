@@ -8,23 +8,38 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const ProductDetailsScreen = ({ route }) => {
   const { item } = route.params; 
   const [searchQuery, setSearchQuery] = useState('');
+  const [newImg, setNewimg]= useState(item.image);
 
   const handleSearch = () => {
     navigation.navigate('CategoryItems', { searchQuery });
   };
-
+  function handleimg(x)
+  {
+    setNewimg(x)
+  }
 
   return (
     <View style={styles.container}>
   
       
      
-      <View style={{justifyContent:"center",margin:"auto"}}>
-      <Image source={{ uri: item.image }} style={styles.productImage} />
+      <View style={{justifyContent:"center",alignItems:"center"}}>
+      <Image source={{ uri: newImg }} style={styles.productImage} />
       <Text style={styles.productName}>{item.name}</Text>
-     
-
       </View>
+      <View style={styles.moreimg}>
+        <TouchableOpacity onPress={()=>handleimg("https://via.placeholder.com/100")}>
+        <Image source={{uri:"https://via.placeholder.com/100"}} style={styles.img1}></Image>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>handleimg("https://via.placeholder.com/100")}>
+        <Image source={{uri:"https://via.placeholder.com/100"}} style={styles.img1}></Image>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>handleimg("https://via.placeholder.com/100")}>
+        <Image source={{uri:"https://via.placeholder.com/100"}} style={styles.img1}></Image>
+        </TouchableOpacity>
+     
+     
+     </View>
       <View style={styles.detail}> 
         <View style={styles.c1}>
         <Text >₹{item.price}</Text>
@@ -82,10 +97,18 @@ const styles = StyleSheet.create({
     padding: 20,
     
   },
+  moreimg:{
+  flexDirection:"row",
+  gap:10
+  },
   container2:{
  flexDirection:"row",
   justifyContent:"space-between",
   gap:70
+  },
+  img1:{
+ width:80,
+ height:80
   },
   addButton: {
     padding: 10,
