@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image,Button, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 const ProductDetailsScreen = ({ route }) => {
@@ -56,8 +57,15 @@ const ProductDetailsScreen = ({ route }) => {
       ))}
     </View >
  <View style={{flexDirection:"row",justifyContent:"space-evenly", paddingTop:40}}>
- <Button title='Add' color="green"></Button>
-    <Button title='Buy' color="green"></Button>
+
+  <View style={styles.container2}>
+      <TouchableOpacity style={styles.addButton}>
+        <Text style={styles.buttonText}>Add</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.buyButton}>
+        <Text style={styles.buttonText}>Buy</Text>
+      </TouchableOpacity>
+    </View>
      
 
  </View>
@@ -74,6 +82,28 @@ const styles = StyleSheet.create({
     padding: 20,
     
   },
+  container2:{
+ flexDirection:"row",
+  justifyContent:"space-between",
+  gap:70
+  },
+  addButton: {
+    padding: 10,
+    backgroundColor: 'green',
+    width: 100,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buyButton: {
+    padding: 10,
+    backgroundColor: 'green',
+    width: 100,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+  },
+
   detail:{
     flexDirection:"row",
     justifyContent:"space-between",

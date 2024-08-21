@@ -100,6 +100,13 @@ const items = {
       op: "400",
       discount: "20%",
     },
+    {
+      name: "Atta",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
   ],
   4: [
     {
@@ -167,7 +174,7 @@ const items = {
 };
 
 const subcategory = [
-  { id: "7", parent_category_id: 3, name: "Pulse", image: "image URL" },
+  { id: "7", parent_category_id: 3, name: "Dal", image: "image URL" },
   { id: "8", parent_category_id: 3, name: "Rice", image: "image URL" },
   { id: "9", parent_category_id: 3, name: "Atta", image: "image URL" },
   { id: "10", parent_category_id: 1, name: "Rasgulla", image: "image URL" },
