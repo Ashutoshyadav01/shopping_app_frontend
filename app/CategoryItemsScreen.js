@@ -195,11 +195,14 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   const [subfilter, setSubfilter] = useState([]);
 
   function handleFilter(name) {
-    const x = setFilteredItems(
+    const x = 
       filteredItems.filter((item) =>
         item.name.toLowerCase().includes(name.toLowerCase())
-      )
+      
     );
+    setFilteredItems(x);
+    setCount(x.length)
+  
   }
 
   useEffect(() => {
@@ -213,20 +216,28 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     (item) => item.parent_category_id == category.id
   );
 
+  function AllItems()
+  {
+    const categoryItems = items[category.id] || [];
+    setFilteredItems(categoryItems);
+    setCount(categoryItems.length);
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
       </Text>
       <Text>
+  
         {count} {count > 1 ? "items found" : "item found"}
       </Text>
-
+      <Button title="All" onPress={AllItems}></Button>
       <FlatList
         data={sub_cat}
         keyExtractor={(item, index) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
+          
             <Button title={item.name} onPress={() => handleFilter(item.name)} />
           </View>
         )}
