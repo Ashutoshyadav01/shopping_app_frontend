@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }) => {
           placeholderTextColor="#aaa"
           value={searchQuery}
           onChangeText={setSearchQuery}
+          clearButtonMode='always'
         />
         <Button title="Search" color="green" onPress={handleSearch} />
       </View>
@@ -62,7 +63,13 @@ const HomeScreen = ({ navigation }) => {
         <Icon name="home-outline" size={30} color="#4CAF50" />
         <Icon name="clipboard-outline" size={30} color="#4CAF50" />
         <Icon name="cart-outline" size={30} color="#4CAF50" />
+        <TouchableOpacity onPress={()=>{
+          {navigation.navigate("Signup")}
+        }}>
+
         <Icon name="person-outline" size={30} color="#4CAF50" />
+        </TouchableOpacity>
+        
       </View>
     </View>
   );
