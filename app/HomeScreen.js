@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
+
 
 const categories = [
   { id: '1', name: 'Sweets', image: 'https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp' },
@@ -38,6 +38,7 @@ const HomeScreen = ({ navigation }) => {
           placeholderTextColor="#aaa"
           value={searchQuery}
           onChangeText={setSearchQuery}
+          clearButtonMode='always'
         />
         <Button title="Search" color="green" onPress={handleSearch} />
       </View>
@@ -62,7 +63,13 @@ const HomeScreen = ({ navigation }) => {
         <Icon name="home-outline" size={30} color="#4CAF50" />
         <Icon name="clipboard-outline" size={30} color="#4CAF50" />
         <Icon name="cart-outline" size={30} color="#4CAF50" />
+        <TouchableOpacity onPress={()=>{
+          {navigation.navigate("Signup")}
+        }}>
+
         <Icon name="person-outline" size={30} color="#4CAF50" />
+        </TouchableOpacity>
+        
       </View>
     </View>
   );
