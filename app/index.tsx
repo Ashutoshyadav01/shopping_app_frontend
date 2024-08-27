@@ -7,7 +7,8 @@ import CategoryItemsScreen from './CategoryItemsScreen';
 import SearchItems from "./SearchItems";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
-
+import Otp from "./Otp";
+import SignUpPage from './SignupPage';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -20,6 +21,8 @@ const App = () => {
         <Stack.Screen name="SearchItems" component={SearchItems}/>
         <Stack.Screen name="Signup" component={SignUp}/>
         <Stack.Screen name="Signin" component={SignIn}/>
+        <Stack.Screen name="Otp" component={Otp}/>
+        <Stack.Screen name="SignUp" component={SignUpPage}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -191,58 +191,62 @@ const subcategory = [
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
+  const [allItems, setAllItems] = useState([]); 
   const [count, setCount] = useState(0);
-  const [subfilter, setSubfilter] = useState([]);
-
-  function handleFilter(name) {
-    const x = 
-      filteredItems.filter((item) =>
-        item.name.toLowerCase().includes(name.toLowerCase())
-      
-    );
-    setFilteredItems(x);
-    setCount(x.length)
-  
-  }
 
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
-      setFilteredItems(items[category.id]);
+      setFilteredItems(categoryItems);
+      setAllItems(categoryItems);  
       setCount(categoryItems.length);
     }
   }, [category]);
+
   const sub_cat = subcategory.filter(
     (item) => item.parent_category_id == category.id
   );
 
-  function AllItems()
-  {
-    const categoryItems = items[category.id] || [];
-    setFilteredItems(categoryItems);
-    setCount(categoryItems.length);
+  function handleFilter(name) {
+    const x = allItems.filter((item) =>
+      item.name.toLowerCase().includes(name.toLowerCase())
+    );
+    setFilteredItems(x);
+    setCount(x.length);
   }
+
+  function showAllItems() {
+    setFilteredItems(allItems);
+    setCount(allItems.length);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
       </Text>
-      <Text>
-  
-        {count} {count > 1 ? "items found" : "item found"}
-      </Text>
-      <Button title="All" onPress={AllItems}></Button>
-      <FlatList
+      <TouchableOpacity onPress={showAllItems}>
+  <Text style={styles.allButtonText}>All</Text>
+</TouchableOpacity>
+
+<FlatList
         data={sub_cat}
-        keyExtractor={(item, index) => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
-          
-            <Button title={item.name} onPress={() => handleFilter(item.name)} />
+          <TouchableOpacity onPress={() => handleFilter(item.name)}>
+  <Text style={styles.subcategoryButtonText}>{item.name}</Text>
+</TouchableOpacity>
+
           </View>
         )}
       />
 
+      <Text>
+        {count} {count > 1 ? "items found" : "item found"}
+      </Text>
+    
+      
       <FlatList
         data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
@@ -273,20 +277,38 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   itemImage: {
-    width: 100, // Ensure width is set
-    height: 100, // Ensure height is set
+    width: 100,
+    height: 100,
     marginRight: 10,
-    borderRadius: 8, // Optional: to make images rounded
+    borderRadius: 8,
     marginTop: 10,
   },
   itemText: {
     margin: "auto",
     marginLeft: 0,
   },
-
   itemContainer: {
     flexDirection: "row",
   },
+  allButtonText:{
+    backgroundColor: 'grey', 
+    paddingVertical: 8, 
+    paddingHorizontal: 12, 
+    borderRadius: 8, 
+    alignSelf: 'flex-start', 
+    marginRight: 10, 
+    marginBottom:10
+  },
+  subcategoryButtonText:{
+    backgroundColor: 'grey', 
+    paddingVertical: 8, 
+    paddingHorizontal: 12, 
+    borderRadius: 8, 
+    alignSelf: 'flex-start', 
+    marginRight: 10, 
+    marginBottom:10,
+    flexDirection:"row"
+  }
 });
 
 export default CategoryItemsScreen;
