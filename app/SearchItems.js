@@ -7,143 +7,174 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
-
 const items = {
-    1: [
-      {
-        name: "Kaju Katli",
-        image:
-          "https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Rasgulla",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Gulab Jamun",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-    ],
-    2: [
-      {
-        name: "Shampoo",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Soap",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Toothpaste",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-    ],
-    3: [
-      {
-        name: "Basmati Rice",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Chana Dal",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Wheat Flour",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-    ],
-    4: [
-      {
-        name: "Coca-Cola",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Maaza",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      { name: "Coffee", image: "https://via.placeholder.com/100" },
-    ],
-    5: [
-      {
-        name: "Lays",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "KurKure",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Pringles",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-    ],
-    6: [
-      {
-        name: "Apples",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Bananas",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-      {
-        name: "Tomatoes",
-        image: "https://via.placeholder.com/100",
-        price: "300",
-        op: "400",
-        discount: "20%",
-      },
-    ],
-  };
-
+  1: [
+    {
+      name: "Kaju Katli",
+      image:
+        "https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Rasgulla",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Gulab Jamun",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+  ],
+  2: [
+    {
+      name: "Shampoo",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Soap",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Pepsodent Toothpaste",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Sensodyne Toothpaste",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Colgate Toothbrush",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+  ],
+  3: [
+    {
+      name: "Basmati Rice",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Brown Rice",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Chana Dal",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Wheat Flour",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Atta",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+  ],
+  4: [
+    {
+      name: "Coca-Cola",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Maaza",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    { name: "Coffee", 
+      image: "https://via.placeholder.com/100" ,
+      price: "300",
+      op: "400",
+      discount: "20%",
+    }
+  ],
+  5: [
+    {
+      name: "Lays",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "KurKure",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Pringles",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+  ],
+  6: [
+    {
+      name: "Apples",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Bananas",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+    {
+      name: "Tomatoes",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
+  ],
+};
 
 function SearchItems({ navigation, route }) {
   const { searchQuery } = route.params;

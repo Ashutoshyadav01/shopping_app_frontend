@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Button,
 } from "react-native";
-
+import Icon from "react-native-vector-icons/FontAwesome";
 const items = {
   1: [
     {
@@ -123,7 +122,12 @@ const items = {
       op: "400",
       discount: "20%",
     },
-    { name: "Coffee", image: "https://via.placeholder.com/100" },
+    { name: "Coffee", 
+      image: "https://via.placeholder.com/100" ,
+      price: "300",
+      op: "400",
+      discount: "20%",
+    }
   ],
   5: [
     {
@@ -188,18 +192,18 @@ const subcategory = [
   { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
 ];
 
+
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
-  const [allItems, setAllItems] = useState([]); 
-  const [count, setCount] = useState(0);
+  const [allItems, setAllItems] = useState([]);
+  const [itemCounts, setItemCounts] = useState({}); // Initialize an empty object to hold item counts
 
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
       setFilteredItems(categoryItems);
-      setAllItems(categoryItems);  
-      setCount(categoryItems.length);
+      setAllItems(categoryItems);
     }
   }, [category]);
 
@@ -212,12 +216,10 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       item.name.toLowerCase().includes(name.toLowerCase())
     );
     setFilteredItems(x);
-    setCount(x.length);
   }
 
   function showAllItems() {
     setFilteredItems(allItems);
-    setCount(allItems.length);
   }
 
   return (
@@ -225,41 +227,76 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       <Text style={styles.title}>
         {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
       </Text>
-      <TouchableOpacity onPress={showAllItems}>
-  <Text style={styles.allButtonText}>All</Text>
-</TouchableOpacity>
 
-<FlatList
-        data={sub_cat}
+      <FlatList
+        data={[{ id: "0", name: "All" }, ...sub_cat]}
+        horizontal={true}
+        style={styles.buttons}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View>
-          <TouchableOpacity onPress={() => handleFilter(item.name)}>
-  <Text style={styles.subcategoryButtonText}>{item.name}</Text>
-</TouchableOpacity>
-
-          </View>
+          <TouchableOpacity
+            onPress={() =>
+              item.id === "0" ? showAllItems() : handleFilter(item.name)
+            }
+          >
+            <Text style={styles.subcategoryButtonText}>{item.name}</Text>
+          </TouchableOpacity>
         )}
       />
 
-      <Text>
-        {count} {count > 1 ? "items found" : "item found"}
-      </Text>
-    
-      
       <FlatList
         data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ProductDetails", { item })}
-          >
-            <View style={styles.itemContainer}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
-              <Text style={styles.itemText}>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+        contentContainerStyle={styles.itemList}
+        renderItem={({ item, index }) => {
+          const itemCount = itemCounts[item.name] || 0; // Get the count for the current item
+          return (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ProductDetails", { item })}
+            >
+              <View style={styles.itemContainer}>
+                <View>
+                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                </View>
+                <View style={styles.text}>
+                  <Text style={styles.itemText1}>{item.name}</Text>
+                  <Text style={styles.itemText2}>Price: ₹{item.price}</Text>
+                  <Text style={styles.itemText3}>{item.discount}</Text>
+                </View>
+                <View style={styles.item3}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setItemCounts({
+                        ...itemCounts,
+                        [item.name]: itemCount + 1, // Update the count for this specific item
+                      });
+                    }}
+                  >
+                    <Icon name="plus" size={20} color="white" style={styles.iconPlusMinus} />
+                  </TouchableOpacity>
+                  <Text style={{ fontSize: 20 }}>{itemCount}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setItemCounts({
+                        ...itemCounts,
+                        [item.name]: itemCount > 0 ? itemCount - 1 : 0, // Ensure count doesn't go below 0
+                      });
+                    }}
+                  >
+                    <Icon name="minus" size={20} color="white" style={styles.iconPlusMinus} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // Handle adding item to cart
+                    }}
+                  >
+                    <Icon name="shopping-cart" size={24} color="green" style={styles.iconCart} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
@@ -271,10 +308,32 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
+  text: {
+    justifyContent: "center",
+    flex: 1, 
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  buttons: {
+    marginBottom: 10,
+  },
+  item3: {
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  itemList: {
+    paddingTop: 0,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    marginBottom: 15,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   itemImage: {
     width: 100,
@@ -283,32 +342,34 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
   },
-  itemText: {
-    margin: "auto",
-    marginLeft: 0,
+  itemText1: {
+    fontWeight: "bold",
+    flexShrink: 1,
   },
-  itemContainer: {
-    flexDirection: "row",
+  itemText2: {
+    flexShrink: 1,
   },
-  allButtonText:{
-    backgroundColor: 'grey', 
-    paddingVertical: 8, 
-    paddingHorizontal: 12, 
-    borderRadius: 8, 
-    alignSelf: 'flex-start', 
-    marginRight: 10, 
-    marginBottom:10
+  itemText3: {
+    color: "green",
   },
-  subcategoryButtonText:{
-    backgroundColor: 'grey', 
-    paddingVertical: 8, 
-    paddingHorizontal: 12, 
-    borderRadius: 8, 
-    alignSelf: 'flex-start', 
-    marginRight: 10, 
-    marginBottom:10,
-    flexDirection:"row"
-  }
+  iconPlusMinus: {
+    backgroundColor: "green", 
+    padding: 7,
+    borderRadius: 8,
+    marginHorizontal: 5, 
+  },
+  iconCart: {
+    marginLeft: 10,
+  },
+  subcategoryButtonText: {
+    backgroundColor: "grey",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginRight: 10,
+    marginBottom: 10,
+  },
 });
 
 export default CategoryItemsScreen;

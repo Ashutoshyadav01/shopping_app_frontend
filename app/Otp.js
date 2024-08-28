@@ -4,7 +4,7 @@ import { useState } from "react";
 function Otp({ route, navigation }) {
   const { otp,input } = route.params; // Retrieve the OTP from the previous screen
   const [enteredOtp, setEnteredOtp] = useState("");
-  let count=0;
+ const [count,setCount]=useState(1);
 
   const handleVerifyOtp = () => {
     if (
@@ -14,7 +14,7 @@ function Otp({ route, navigation }) {
       
     } else {
       alert("Invalid OTP. Please try again.");
-      count++;
+     setCount(count+1)
       if(count>3)
       {
      alert("Too many attemps");
@@ -24,7 +24,7 @@ function Otp({ route, navigation }) {
  
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Your OTP is: {otp}</Text>
+      <Text style={styles.text}>Your OTP is:{otp}</Text>
       <Text style={styles.text}>CHECK YOUR MOB NO:{input}</Text>
       <TextInput
         style={styles.input}

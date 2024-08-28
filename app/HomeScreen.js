@@ -53,6 +53,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.categoryItem}>
               <Image source={{ uri: item.image }} style={styles.categoryImage} />
               <Text style={styles.categoryText}>{item.name}</Text>
+            
             </View>
           </TouchableOpacity>
         )}
