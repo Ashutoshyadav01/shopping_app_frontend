@@ -7,9 +7,12 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const items = {
-  1: [
+   1:[
     {
+      product_id:1,
       name: "Kaju Katli",
       image:
         "https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp",
@@ -175,10 +178,10 @@ const items = {
     },
   ],
 };
-
 function SearchItems({ navigation, route }) {
   const { searchQuery } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
+  const [itemCounts, setItemCounts] = useState({}); // To track the count of each item
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -199,55 +202,179 @@ function SearchItems({ navigation, route }) {
     }
   }, [searchQuery]);
 
+  // Function to store item in AsyncStorage
+  const storeItemInCart = async (productId, quantity) => {
+    try {
+      const cartItem = { productId, quantity };
+      const existingCart = await AsyncStorage.getItem("cart");
+      let cart = existingCart ? JSON.parse(existingCart) : [];
+
+      // Check if the item is already in the cart
+      const itemIndex = cart.findIndex((item) => item.productId === productId);
+      if (itemIndex > -1) {
+        // Update the quantity if the item already exists
+        cart[itemIndex].quantity += quantity;
+      } else {
+        // Add new item to the cart
+        cart.push(cartItem);
+      }
+
+      await AsyncStorage.setItem("cart", JSON.stringify(cart));
+      console.log("Cart updated:", cart);
+    } catch (error) {
+      console.error("Error storing item in cart:", error);
+    }
+  };
+
   return (
     <View style={{ padding: 16 }}>
-     <Text>{count}{count>1?" items found ":"item found"}</Text>{count > 0 ? (
+      <Text>
+        {count} {count > 1 ? "items found" : "item found"}
+      </Text>
+      {count > 0 ? (
         <FlatList
           data={filteredItems}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={()=>{
-                navigation.navigate("ProductDetails",{item})
-            }}>
-            <View style={styles.itemContainer}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
-              <View>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
-                <Text style={styles.itemDiscount}>Discount: {item.discount}</Text>
+          renderItem={({ item }) => {
+            const itemCount = itemCounts[item.name] || 0;
+            return (
+              <View style={styles.itemContainer}>
+                <Image source={{ uri: item.image }} style={styles.itemImage} />
+                <View style={styles.text}>
+                  <Text style={styles.itemText1}>{item.name}</Text>
+                  <Text style={styles.itemText2}>Price: ₹{item.price}</Text>
+                  <Text style={styles.itemText3}>{item.discount}</Text>
+                </View>
+                <View style={styles.item3}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setItemCounts({
+                        ...itemCounts,
+                        [item.name]: itemCount + 1,
+                      });
+                    }}
+                  >
+                    <Icon
+                      name="plus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
+                  </TouchableOpacity>
+                  <Text style={{ fontSize: 20 }}>{itemCount}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setItemCounts({
+                        ...itemCounts,
+                        [item.name]: itemCount > 0 ? itemCount - 1 : 0,
+                      });
+                    }}
+                  >
+                    <Icon
+                      name="minus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (itemCount > 0) {
+                        storeItemInCart(item.name, itemCount); // Store item in AsyncStorage
+                      }
+                    }}
+                  >
+                    <Icon
+                      name="shopping-cart"
+                      size={24}
+                      color="green"
+                      style={styles.iconCart}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            </TouchableOpacity>
-          )}
+            );
+          }}
         />
       ) : (
-        <Text>No items found for "{searchQuery}"</Text>
+        <Text>No items found.</Text>
       )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  itemContainer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    alignItems: "center",
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
   },
-  itemImage: {
-    width: 100,
-    height: 100,
-    marginRight: 16,
-  },
-  itemName: {
-    fontSize: 16,
+  resultText: {
+    fontSize: 18,
+    marginBottom: 10,
     fontWeight: "bold",
   },
-  itemPrice: {
-    fontSize: 14,
+  itemList: {
+    paddingBottom: 20,
   },
-  itemDiscount: {
-    fontSize: 12,
+  itemContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+    padding: 15,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  itemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  text: {
+    flex: 1,
+    marginLeft: 15,
+  },
+  itemText1: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  itemText2: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 5,
+  },
+  itemText3: {
+    fontSize: 14,
     color: "green",
+  },
+  item3: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iconPlusMinus: {
+    backgroundColor: "green",
+    padding: 6,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  iconCart: {
+    marginLeft: 15,
+  },
+  noResultsText: {
+    marginTop: 20,
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
   },
 });
 

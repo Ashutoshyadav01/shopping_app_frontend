@@ -8,6 +8,8 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+
 const items = {
   1: [
     {
@@ -178,6 +180,7 @@ const items = {
 };
 
 const subcategory = [
+  // Your existing subcategory data
   { id: "7", parent_category_id: 3, name: "Dal", image: "image URL" },
   { id: "8", parent_category_id: 3, name: "Rice", image: "image URL" },
   { id: "9", parent_category_id: 3, name: "Atta", image: "image URL" },
@@ -192,42 +195,69 @@ const subcategory = [
   { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
 ];
 
-
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
   const [allItems, setAllItems] = useState([]);
-  const [itemCounts, setItemCounts] = useState({}); // Initialize an empty object to hold item counts
+  const [itemCounts, setItemCounts] = useState({});
+  const[Count,setCount]= useState(0);
 
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
       setFilteredItems(categoryItems);
       setAllItems(categoryItems);
+      setCount(categoryItems.length)
     }
   }, [category]);
 
   const sub_cat = subcategory.filter(
     (item) => item.parent_category_id == category.id
   );
-
+ 
   function handleFilter(name) {
     const x = allItems.filter((item) =>
       item.name.toLowerCase().includes(name.toLowerCase())
     );
     setFilteredItems(x);
+    setCount(x.length)
   }
 
   function showAllItems() {
     setFilteredItems(allItems);
+    setCount(allItems.length);
   }
+
+  // Function to store item in AsyncStorage
+  const storeItemInCart = async (productId, quantity) => {
+    try {
+      const cartItem = { productId, quantity };
+      const existingCart = await AsyncStorage.getItem("cart");
+      let cart = existingCart ? JSON.parse(existingCart) : [];
+
+      // Check if the item is already in the cart
+      const itemIndex = cart.findIndex((item) => item.productId === productId);
+      if (itemIndex > -1) {
+        // Update the quantity if the item already exists
+        cart[itemIndex].quantity = quantity;
+      } else {
+        // Add new item to the cart
+        cart.push(cartItem);
+      }
+
+      await AsyncStorage.setItem("cart", JSON.stringify(cart));
+      console.log("Cart updated:", cart);
+    } catch (error) {
+      console.error("Error storing item in cart:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
       </Text>
-
+   
       <FlatList
         data={[{ id: "0", name: "All" }, ...sub_cat]}
         horizontal={true}
@@ -243,20 +273,23 @@ const CategoryItemsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-
+    <Text> {Count} {Count>1 ? "Items in the list" : "Item in the list "}  </Text>
       <FlatList
         data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.itemList}
-        renderItem={({ item, index }) => {
-          const itemCount = itemCounts[item.name] || 0; // Get the count for the current item
+        renderItem={({ item }) => {
+          const itemCount = itemCounts[item.name] || 0;
           return (
             <TouchableOpacity
               onPress={() => navigation.navigate("ProductDetails", { item })}
             >
               <View style={styles.itemContainer}>
                 <View>
-                  <Image source={{ uri: item.image }} style={styles.itemImage} />
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.itemImage}
+                  />
                 </View>
                 <View style={styles.text}>
                   <Text style={styles.itemText1}>{item.name}</Text>
@@ -268,29 +301,44 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                     onPress={() => {
                       setItemCounts({
                         ...itemCounts,
-                        [item.name]: itemCount + 1, // Update the count for this specific item
+                        [item.name]: itemCount + 1,
                       });
                     }}
                   >
-                    <Icon name="plus" size={20} color="white" style={styles.iconPlusMinus} />
+                    <Icon
+                      name="plus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
                   </TouchableOpacity>
                   <Text style={{ fontSize: 20 }}>{itemCount}</Text>
                   <TouchableOpacity
                     onPress={() => {
                       setItemCounts({
                         ...itemCounts,
-                        [item.name]: itemCount > 0 ? itemCount - 1 : 0, // Ensure count doesn't go below 0
+                        [item.name]: itemCount > 0 ? itemCount - 1 : 0,
                       });
                     }}
                   >
-                    <Icon name="minus" size={20} color="white" style={styles.iconPlusMinus} />
+                    <Icon
+                      name="minus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      // Handle adding item to cart
+                      storeItemInCart(item.name, itemCount); // Store item in AsyncStorage
                     }}
                   >
-                    <Icon name="shopping-cart" size={24} color="green" style={styles.iconCart} />
+                    <Icon
+                      name="shopping-cart"
+                      size={24}
+                      color="green"
+                      style={styles.iconCart}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -369,7 +417,9 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginRight: 10,
     marginBottom: 10,
+    color: "white",
   },
 });
 
 export default CategoryItemsScreen;
+``

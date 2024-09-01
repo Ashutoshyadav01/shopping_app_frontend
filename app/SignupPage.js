@@ -19,13 +19,13 @@ function SignUpPage({ navigation }) {
         const otp = randomNum();
     
         try {
+           
           
             const existingNumbers = await AsyncStorage.getItem('phoneNumbers');
             let phoneNumbers = existingNumbers ? JSON.parse(existingNumbers) : [];
     
             phoneNumbers.push(input);
-    
-        
+           
             await AsyncStorage.setItem('phoneNumbers', JSON.stringify(phoneNumbers));
             console.log('Phone numbers saved to AsyncStorage', phoneNumbers);
     
