@@ -1,14 +1,3 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const items = {
   1: [
@@ -124,12 +113,13 @@ const items = {
       op: "400",
       discount: "20%",
     },
-    { name: "Coffee", 
-      image: "https://via.placeholder.com/100" ,
+    {
+      name: "Coffee",
+      image: "https://via.placeholder.com/100",
       price: "300",
       op: "400",
       discount: "20%",
-    }
+    },
   ],
   5: [
     {
@@ -195,32 +185,58 @@ const subcategory = [
   { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
 ];
 
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
   const [allItems, setAllItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
-  const[Count,setCount]= useState(0);
+  const [Count, setCount] = useState(0);
 
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
       setFilteredItems(categoryItems);
       setAllItems(categoryItems);
-      setCount(categoryItems.length)
+      setCount(categoryItems.length);
     }
+
+    // Retrieve stored item counts from AsyncStorage when the component mounts
+    const loadItemCounts = async () => {
+      try {
+        const storedCounts = await AsyncStorage.getItem("itemCounts");
+        if (storedCounts) {
+          setItemCounts(JSON.parse(storedCounts));
+        }
+      } catch (error) {
+        console.error("Error loading item counts:", error);
+      }
+    };
+
+    loadItemCounts();
   }, [category]);
 
   const sub_cat = subcategory.filter(
     (item) => item.parent_category_id == category.id
   );
- 
+
   function handleFilter(name) {
     const x = allItems.filter((item) =>
       item.name.toLowerCase().includes(name.toLowerCase())
     );
     setFilteredItems(x);
-    setCount(x.length)
+    setCount(x.length);
   }
 
   function showAllItems() {
@@ -252,12 +268,24 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     }
   };
 
+  // Function to update item count and store it in AsyncStorage
+  const updateItemCount = async (itemName, newCount) => {
+    const updatedCounts = { ...itemCounts, [itemName]: newCount };
+    setItemCounts(updatedCounts);
+
+    try {
+      await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
+    } catch (error) {
+      console.error("Error storing item counts:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
       </Text>
-   
+
       <FlatList
         data={[{ id: "0", name: "All" }, ...sub_cat]}
         horizontal={true}
@@ -273,7 +301,9 @@ const CategoryItemsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-    <Text> {Count} {Count>1 ? "Items in the list" : "Item in the list "}  </Text>
+      <Text>
+        {Count} {Count > 1 ? "Items in the list" : "Item in the list "}
+      </Text>
       <FlatList
         data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
@@ -299,10 +329,8 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                 <View style={styles.item3}>
                   <TouchableOpacity
                     onPress={() => {
-                      setItemCounts({
-                        ...itemCounts,
-                        [item.name]: itemCount + 1,
-                      });
+                      const newCount = itemCount + 1;
+                      updateItemCount(item.name, newCount);
                     }}
                   >
                     <Icon
@@ -315,10 +343,8 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                   <Text style={{ fontSize: 20 }}>{itemCount}</Text>
                   <TouchableOpacity
                     onPress={() => {
-                      setItemCounts({
-                        ...itemCounts,
-                        [item.name]: itemCount > 0 ? itemCount - 1 : 0,
-                      });
+                      const newCount = itemCount > 0 ? itemCount - 1 : 0;
+                      updateItemCount(item.name, newCount);
                     }}
                   >
                     <Icon
@@ -358,7 +384,7 @@ const styles = StyleSheet.create({
   },
   text: {
     justifyContent: "center",
-    flex: 1, 
+    flex: 1,
   },
   title: {
     fontSize: 24,
@@ -401,10 +427,10 @@ const styles = StyleSheet.create({
     color: "green",
   },
   iconPlusMinus: {
-    backgroundColor: "green", 
+    backgroundColor: "green",
     padding: 7,
     borderRadius: 8,
-    marginHorizontal: 5, 
+    marginHorizontal: 5,
   },
   iconCart: {
     marginLeft: 10,
@@ -422,4 +448,3 @@ const styles = StyleSheet.create({
 });
 
 export default CategoryItemsScreen;
-``
