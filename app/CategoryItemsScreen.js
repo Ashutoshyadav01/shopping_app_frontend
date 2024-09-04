@@ -1,3 +1,14 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const items = {
   1: [
@@ -185,18 +196,6 @@ const subcategory = [
   { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
 ];
 
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
@@ -207,6 +206,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
+
       setFilteredItems(categoryItems);
       setAllItems(categoryItems);
       setCount(categoryItems.length);
@@ -282,9 +282,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
-      </Text>
+      <Text style={styles.title}>{category.name}</Text>
 
       <FlatList
         data={[{ id: "0", name: "All" }, ...sub_cat]}
@@ -310,6 +308,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
         contentContainerStyle={styles.itemList}
         renderItem={({ item }) => {
           const itemCount = itemCounts[item.name] || 0;
+
           return (
             <TouchableOpacity
               onPress={() => navigation.navigate("ProductDetails", { item })}
