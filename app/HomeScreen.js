@@ -47,12 +47,13 @@ const HomeScreen = ({ navigation }) => {
       <FlatList
         data={categories}
         numColumns={2}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={( item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('CategoryItems', { category: item })}>
             <View style={styles.categoryItem}>
               <Image source={{ uri: item.image }} style={styles.categoryImage} />
               <Text style={styles.categoryText}>{item.name}</Text>
+            
             </View>
           </TouchableOpacity>
         )}

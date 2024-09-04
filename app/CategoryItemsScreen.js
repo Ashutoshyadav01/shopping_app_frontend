@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Button,
 } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const items = {
   1: [
@@ -123,7 +124,13 @@ const items = {
       op: "400",
       discount: "20%",
     },
-    { name: "Coffee", image: "https://via.placeholder.com/100" },
+    {
+      name: "Coffee",
+      image: "https://via.placeholder.com/100",
+      price: "300",
+      op: "400",
+      discount: "20%",
+    },
   ],
   5: [
     {
@@ -174,6 +181,7 @@ const items = {
 };
 
 const subcategory = [
+  // Your existing subcategory data
   { id: "7", parent_category_id: 3, name: "Dal", image: "image URL" },
   { id: "8", parent_category_id: 3, name: "Rice", image: "image URL" },
   { id: "9", parent_category_id: 3, name: "Atta", image: "image URL" },
@@ -191,16 +199,32 @@ const subcategory = [
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
-  const [allItems, setAllItems] = useState([]); 
-  const [count, setCount] = useState(0);
+  const [allItems, setAllItems] = useState([]);
+  const [itemCounts, setItemCounts] = useState({});
+  const [Count, setCount] = useState(0);
 
   useEffect(() => {
     if (category) {
       const categoryItems = items[category.id] || [];
+
       setFilteredItems(categoryItems);
-      setAllItems(categoryItems);  
+      setAllItems(categoryItems);
       setCount(categoryItems.length);
     }
+
+    // Retrieve stored item counts from AsyncStorage when the component mounts
+    const loadItemCounts = async () => {
+      try {
+        const storedCounts = await AsyncStorage.getItem("itemCounts");
+        if (storedCounts) {
+          setItemCounts(JSON.parse(storedCounts));
+        }
+      } catch (error) {
+        console.error("Error loading item counts:", error);
+      }
+    };
+
+    loadItemCounts();
   }, [category]);
 
   const sub_cat = subcategory.filter(
@@ -220,46 +244,132 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     setCount(allItems.length);
   }
 
+  // Function to store item in AsyncStorage
+  const storeItemInCart = async (productId, quantity) => {
+    try {
+      const cartItem = { productId, quantity };
+      const existingCart = await AsyncStorage.getItem("cart");
+      let cart = existingCart ? JSON.parse(existingCart) : [];
+
+      // Check if the item is already in the cart
+      const itemIndex = cart.findIndex((item) => item.productId === productId);
+      if (itemIndex > -1) {
+        // Update the quantity if the item already exists
+        cart[itemIndex].quantity = quantity;
+      } else {
+        // Add new item to the cart
+        cart.push(cartItem);
+      }
+
+      await AsyncStorage.setItem("cart", JSON.stringify(cart));
+      console.log("Cart updated:", cart);
+    } catch (error) {
+      console.error("Error storing item in cart:", error);
+    }
+  };
+
+  // Function to update item count and store it in AsyncStorage
+  const updateItemCount = async (itemName, newCount) => {
+    const updatedCounts = { ...itemCounts, [itemName]: newCount };
+    setItemCounts(updatedCounts);
+
+    try {
+      await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
+    } catch (error) {
+      console.error("Error storing item counts:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        {searchQuery ? `Search Results for "${searchQuery}"` : category.name}
-      </Text>
-      <TouchableOpacity onPress={showAllItems}>
-  <Text style={styles.allButtonText}>All</Text>
-</TouchableOpacity>
+      <Text style={styles.title}>{category.name}</Text>
 
-<FlatList
-        data={sub_cat}
+      <FlatList
+        data={[{ id: "0", name: "All" }, ...sub_cat]}
+        horizontal={true}
+        style={styles.buttons}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View>
-          <TouchableOpacity onPress={() => handleFilter(item.name)}>
-  <Text style={styles.subcategoryButtonText}>{item.name}</Text>
-</TouchableOpacity>
-
-          </View>
+          <TouchableOpacity
+            onPress={() =>
+              item.id === "0" ? showAllItems() : handleFilter(item.name)
+            }
+          >
+            <Text style={styles.subcategoryButtonText}>{item.name}</Text>
+          </TouchableOpacity>
         )}
       />
-
       <Text>
-        {count} {count > 1 ? "items found" : "item found"}
+        {Count} {Count > 1 ? "Items in the list" : "Item in the list "}
       </Text>
-    
-      
       <FlatList
         data={filteredItems}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ProductDetails", { item })}
-          >
-            <View style={styles.itemContainer}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
-              <Text style={styles.itemText}>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+        contentContainerStyle={styles.itemList}
+        renderItem={({ item }) => {
+          const itemCount = itemCounts[item.name] || 0;
+
+          return (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ProductDetails", { item })}
+            >
+              <View style={styles.itemContainer}>
+                <View>
+                  <Image
+                    source={{ uri: item.image }}
+                    style={styles.itemImage}
+                  />
+                </View>
+                <View style={styles.text}>
+                  <Text style={styles.itemText1}>{item.name}</Text>
+                  <Text style={styles.itemText2}>Price: ₹{item.price}</Text>
+                  <Text style={styles.itemText3}>{item.discount}</Text>
+                </View>
+                <View style={styles.item3}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const newCount = itemCount + 1;
+                      updateItemCount(item.name, newCount);
+                    }}
+                  >
+                    <Icon
+                      name="plus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
+                  </TouchableOpacity>
+                  <Text style={{ fontSize: 20 }}>{itemCount}</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const newCount = itemCount > 0 ? itemCount - 1 : 0;
+                      updateItemCount(item.name, newCount);
+                    }}
+                  >
+                    <Icon
+                      name="minus"
+                      size={20}
+                      color="white"
+                      style={styles.iconPlusMinus}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      storeItemInCart(item.name, itemCount); // Store item in AsyncStorage
+                    }}
+                  >
+                    <Icon
+                      name="shopping-cart"
+                      size={24}
+                      color="green"
+                      style={styles.iconCart}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
@@ -271,10 +381,32 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
+  text: {
+    justifyContent: "center",
+    flex: 1,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  buttons: {
+    marginBottom: 10,
+  },
+  item3: {
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  itemList: {
+    paddingTop: 0,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    marginBottom: 15,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   itemImage: {
     width: 100,
@@ -283,32 +415,35 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
   },
-  itemText: {
-    margin: "auto",
-    marginLeft: 0,
+  itemText1: {
+    fontWeight: "bold",
+    flexShrink: 1,
   },
-  itemContainer: {
-    flexDirection: "row",
+  itemText2: {
+    flexShrink: 1,
   },
-  allButtonText:{
-    backgroundColor: 'grey', 
-    paddingVertical: 8, 
-    paddingHorizontal: 12, 
-    borderRadius: 8, 
-    alignSelf: 'flex-start', 
-    marginRight: 10, 
-    marginBottom:10
+  itemText3: {
+    color: "green",
   },
-  subcategoryButtonText:{
-    backgroundColor: 'grey', 
-    paddingVertical: 8, 
-    paddingHorizontal: 12, 
-    borderRadius: 8, 
-    alignSelf: 'flex-start', 
-    marginRight: 10, 
-    marginBottom:10,
-    flexDirection:"row"
-  }
+  iconPlusMinus: {
+    backgroundColor: "green",
+    padding: 7,
+    borderRadius: 8,
+    marginHorizontal: 5,
+  },
+  iconCart: {
+    marginLeft: 10,
+  },
+  subcategoryButtonText: {
+    backgroundColor: "grey",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginRight: 10,
+    marginBottom: 10,
+    color: "white",
+  },
 });
 
 export default CategoryItemsScreen;
