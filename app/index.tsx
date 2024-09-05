@@ -9,6 +9,7 @@ import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 import Otp from "./Otp";
 import SignUpPage from './SignupPage';
+import Cart from './Cart'
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Stack.Screen name="Signin" component={SignIn}/>
         <Stack.Screen name="Otp" component={Otp}/>
         <Stack.Screen name="SignUp" component={SignUpPage}/>
+        <Stack.Screen name="Cart" component={Cart}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -63,7 +63,13 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.navBar}>
         <Icon name="home-outline" size={30} color="#4CAF50" />
         <Icon name="clipboard-outline" size={30} color="#4CAF50" />
+        <TouchableOpacity onPress={()=>{
+          navigation.navigate("Cart")
+        }}>
         <Icon name="cart-outline" size={30} color="#4CAF50" />
+
+        </TouchableOpacity>
+       
         <TouchableOpacity onPress={()=>{
           {navigation.navigate("Signup")}
         }}>
