@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to props
+const ProductDetailsScreen = ({ route, navigation }) => {
   const { item } = route.params; 
   const [newImg, setNewimg] = useState(item.image);
   const [itemCounts, setItemCounts] = useState({});
@@ -44,8 +44,19 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
   };
 
   const storeItemInCart = async (productId, quantity) => {
+    if (quantity <= 0) {
+      console.warn("Cannot add items with zero or negative quantity to the cart.");
+      return;
+    }
     try {
-      const cartItem = { productId, quantity };
+      const cartItem = {
+        productId,
+        quantity,
+        name: item.name,
+        price: item.price,
+        discount: item.discount,
+        image: item.image,
+      };
       const existingCart = await AsyncStorage.getItem("cart");
       let cart = existingCart ? JSON.parse(existingCart) : [];
       const itemIndex = cart.findIndex((cartItem) => cartItem.productId === productId);
@@ -57,7 +68,6 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
         cart.push(cartItem);
       }
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
-      await AsyncStorage.setItem("itemCounts", JSON.stringify(itemCounts));
       console.log("Cart updated:", cart);
     } catch (error) {
       console.error("Error storing item in cart:", error);
@@ -66,7 +76,7 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
 
   const handleAddToCart = () => {
     if (itemCount > 0) {
-      storeItemInCart(item.name, itemCount);
+      storeItemInCart(item.productId, itemCount); // Pass productId instead of item.name
       alert("Item added to cart!");
     } else {
       alert("Please select at least one item.");
@@ -75,7 +85,7 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
 
   const handleBuyNow = () => {
     if (itemCount > 0) {
-      storeItemInCart(item.name, itemCount);
+      storeItemInCart(item.productId, itemCount); // Pass productId instead of item.name
       navigation.navigate("CheckoutScreen"); // Navigate to the checkout screen
     } else {
       alert("Please select at least one item.");
@@ -108,6 +118,12 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
           onPress={handleAddToCart}
         >
           <Text style={styles.addToCartText}>Add to Cart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buyNowButton}
+          onPress={handleBuyNow}
+        >
+          <Text style={styles.buyNowText}>Buy Now</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -157,8 +173,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
     padding: 12,
     borderRadius: 4,
+    marginVertical: 8,
   },
   addToCartText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  buyNowButton: {
+    backgroundColor: "#FF5722",
+    padding: 12,
+    borderRadius: 4,
+  },
+  buyNowText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",

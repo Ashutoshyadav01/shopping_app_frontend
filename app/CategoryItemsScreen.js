@@ -266,26 +266,26 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     setCount(allItems.length);
   }
 
-  const storeItemInCart = async (productId, quantity) => {
+  const storeItemInCart = async (productId, quantity, itemDetails) => {
     if (quantity <= 0) {
       console.warn("Cannot add items with zero quantity to the cart.");
       return; // Avoid adding items with zero or negative quantity
     }
     try {
-      const cartItem = { productId, quantity };
+      const cartItem = { productId, quantity, ...itemDetails };
       const existingCart = await AsyncStorage.getItem("cart");
       let cart = existingCart ? JSON.parse(existingCart) : [];
-  
+    
       // Check if the item is already in the cart
       const itemIndex = cart.findIndex((item) => item.productId === productId);
       if (itemIndex > -1) {
-        // Update the quantity if the item already exists
-        cart[itemIndex].quantity = quantity;
+        // Update the quantity and item details if the item already exists
+        cart[itemIndex] = { ...cart[itemIndex], quantity, ...itemDetails };
       } else {
         // Add new item to the cart
         cart.push(cartItem);
       }
-  
+    
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
       console.log("Cart updated:", cart);
     } catch (error) {
@@ -339,7 +339,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 
           return (
             <TouchableOpacity
-              onPress={() => navigation.navigate("ProductDetails", { item })}
+              onPress={() => navigation.navigate("ProductDetail", { item })}
             >
               <View style={styles.itemContainer}>
                 <Image source={{ uri: item.image }} style={styles.itemImage} />
@@ -377,22 +377,27 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => {
-                      if (item.productId) {
-                        storeItemInCart(item.productId, itemCount); // Ensure productId is valid
-                      } else {
-                        console.warn("Invalid productId, cannot add to cart.");
-                      }
-                    }}
-                    
-                  >
-                    <Icon
-                      name="shopping-cart"
-                      size={24}
-                      color="green"
-                      style={styles.iconCart}
-                    />
-                  </TouchableOpacity>
+  onPress={() => {
+    if (item.productId) {
+      storeItemInCart(item.productId, itemCount, {
+        name: item.name,
+        price: item.price,
+        discount: item.discount,
+        image: item.image,
+      }); // Pass product details along with the quantity
+    } else {
+      console.warn("Invalid productId, cannot add to cart.");
+    }
+  }}
+>
+  <Icon
+    name="shopping-cart"
+    size={24}
+    color="green"
+    style={styles.iconCart}
+  />
+</TouchableOpacity>
+
                 </View>
               </View>
             </TouchableOpacity>
@@ -417,6 +422,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginBottom: 10,
+    display:"flex"
   },
   itemList: {
     paddingTop: 0,

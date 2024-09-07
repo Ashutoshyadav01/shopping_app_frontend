@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -36,35 +35,34 @@ const Cart = () => {
 
   // If cart has items
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.title}>Your Cart</Text>
-        <Text style={styles.itemfound}>
-          Total items in cart: {cartItems.length}
-        </Text>
-        <FlatList
-          data={cartItems}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            // Check if item exists before rendering its properties
-            item ? (
-              <View style={styles.cartItem}>
-                <Text style={styles.itemName}>{item.productId}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Your Cart</Text>
+      <Text style={styles.itemCount}>Total items in cart: {cartItems.length}</Text>
+      <FlatList
+        data={cartItems}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          item ? (
+            <View style={styles.cartItem}>
+              {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.itemImage} />
+              ) : null}
+              <View style={styles.itemDetails}>
+                <Text style={styles.itemName}>{item.productId && item.name}</Text>
                 <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+                <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
               </View>
-            ) : null
-          )}
-        />
-      </View>
-      <View>
-        <TouchableOpacity
-          style={styles.buyNowButton}
-          onPress={() => console.log("Buy Now pressed")}
-        >
-          <Text style={styles.buyNowText}>Buy Now</Text>
-        </TouchableOpacity>
-      </View>
-    </>
+            </View>
+          ) : null
+        )}
+      />
+      <TouchableOpacity
+        style={styles.buyNowButton}
+        onPress={() => console.log("Buy Now pressed")}
+      >
+        <Text style={styles.buyNowText}>Buy Now</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -72,48 +70,74 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
   },
-  itemfound: {
-    fontSize: 20,
+  itemCount: {
+    fontSize: 18,
     fontWeight: "bold",
-    color: "grey",
+    color: "#666",
     marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
+    color: "#333",
     marginBottom: 10,
   },
   emptyText: {
     fontSize: 18,
-    color: "gray",
+    color: "#888",
     textAlign: "center",
     marginTop: 20,
   },
   cartItem: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  itemImage: {
+    width: 80,
+    height: 80,
+    resizeMode: "cover",
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  itemDetails: {
+    flex: 1,
   },
   itemName: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333",
   },
   itemQuantity: {
     fontSize: 16,
-    color: "gray",
+    color: "#666",
+  },
+  itemPrice: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 5,
   },
   buyNowButton: {
-    backgroundColor: "green",
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    height: 40,
-    marginBottom: 10,
+    marginVertical: 20,
   },
   buyNowText: {
-    color: "white",
-    fontSize: 17,
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 });
