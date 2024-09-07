@@ -18,7 +18,8 @@ const App = () => {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="CategoryItems" component={CategoryItemsScreen} />
-        <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+
+  <Stack.Screen name="ProductDetail" component={ProductDetailsScreen} />
         <Stack.Screen name="SearchItems" component={SearchItems}/>
         <Stack.Screen name="Signup" component={SignUp}/>
         <Stack.Screen name="Signin" component={SignIn}/>

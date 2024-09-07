@@ -84,75 +84,30 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
 
   return (
     <View style={styles.container}>
-      {/* Product Image and Name */}
-      <View style={styles.productContainer}>
-        <Image source={{ uri: newImg }} style={styles.productImage} />
-        <Text style={styles.productName}>{item.name}</Text>
-      </View>
-
-      {/* More Images */}
-      <View style={styles.moreimg}>
-        <TouchableOpacity onPress={() => handleimg("https://via.placeholder.com/100")}>
-          <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.img1} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleimg("https://via.placeholder.com/100")}>
-          <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.img1} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleimg("https://via.placeholder.com/100")}>
-          <Image source={{ uri: "https://via.placeholder.com/100" }} style={styles.img1} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Price Details and Share Icon */}
-      <View style={styles.detail}>
-        <View style={styles.c1}>
-          <Text style={styles.price}>₹{item.price}</Text>
-          <Text style={styles.op}>₹{item.op}</Text>
-          <View style={styles.bg}><Text style={styles.discount}>{item.discount}</Text></View>
+      <Image source={{ uri: newImg }} style={styles.image} />
+      <View style={styles.infoContainer}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemPrice}>₹{item.price}</Text>
+        <View style={styles.counterContainer}>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => updateItemCount(item.name, -1)}
+          >
+            <Text style={styles.counterText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.counterText}>{itemCount}</Text>
+          <TouchableOpacity
+            style={styles.counterButton}
+            onPress={() => updateItemCount(item.name, 1)}
+          >
+            <Text style={styles.counterText}>+</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => { /* Implement share functionality */ }}>
-          <Icon name="share-outline" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Points Earned */}
-      <View style={styles.pointsContainer}>
-        <Text>You will earn 2 points from this product</Text>
-      </View>
-
-      {/* Reviews and Rating */}
-      <View style={styles.reviewsContainer}>
-        <Text style={styles.reviewsText}>Reviews and Rating</Text>
-        <View style={styles.starcontainer}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Icon
-              key={star}
-              name={star <= 3 ? "star" : "star-outline"}
-              size={24}
-              color="#ffd700"
-            />
-          ))}
-        </View>
-      </View>
-
-      {/* Counter */}
-      <View style={styles.counterContainer}>
-        <TouchableOpacity onPress={() => updateItemCount(item.name, -1)}>
-          <Icon name="remove-circle-outline" size={30} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.itemCountText}>{itemCount}</Text>
-        <TouchableOpacity onPress={() => updateItemCount(item.name, 1)}>
-          <Icon name="add-circle-outline" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Add to Cart and Buy Now Buttons */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={handleAddToCart}
+        >
           <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buyNowButton} onPress={handleBuyNow}>
-          <Text style={styles.buyNowText}>Buy Now</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -162,123 +117,48 @@ const ProductDetailsScreen = ({ route, navigation }) => { // Added navigation to
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
     backgroundColor: "#fff",
   },
-  productContainer: {
-    justifyContent: "center",
+  image: {
+    width: "100%",
+    height: 300,
+    resizeMode: "contain",
+  },
+  infoContainer: {
+    marginTop: 16,
     alignItems: "center",
   },
-  productImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-  },
-  productName: {
+  itemName: {
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: 10,
-    textAlign: "center",
   },
-  moreimg: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-  img1: {
-    width: 50,
-    height: 50,
-    marginHorizontal: 10,
-    borderRadius: 5,
-  },
-  detail: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  c1: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  price: {
+  itemPrice: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  op: {
-    textDecorationLine: "line-through",
-    marginLeft: 10,
-    color: "grey",
-    fontSize: 16,
-  },
-  bg: {
-    backgroundColor: "green",
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  discount: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  pointsContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  reviewsContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  reviewsText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  starcontainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 10,
+    color: "#333",
+    marginVertical: 8,
   },
   counterContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
+    marginVertical: 16,
   },
-  itemCountText: {
-    marginHorizontal: 20,
+  counterButton: {
+    backgroundColor: "#ddd",
+    padding: 10,
+    borderRadius: 4,
+    marginHorizontal: 8,
+  },
+  counterText: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  buttonContainer: {
-    marginTop: 30,
-    alignItems: "center",
-  },
   addToCartButton: {
-    backgroundColor: "green",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 5,
-    alignItems: "center",
-    marginBottom: 15,
-    width: "100%",
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 4,
   },
   addToCartText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  buyNowButton: {
-    backgroundColor: "orange",
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 5,
-    alignItems: "center",
-    width: "100%",
-  },
-  buyNowText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",

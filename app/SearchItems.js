@@ -295,10 +295,9 @@ function SearchItems({ navigation, route }) {
           keyExtractor={(item) => item.productId}
           renderItem={({ item }) => (
             <TouchableOpacity
-            onPress={()=>{
-              navigation.navigate("productDetails")
-            }}
-            >
+            onPress={() => navigation.navigate('ProductDetail', {item})}>
+  <Text>{item.name}</Text>
+            
             <View style={styles.itemContainer}>
               <Image source={{ uri: item.image }} style={styles.itemImage} />
               <View style={styles.itemInfo}>
