@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [itemCounts, setItemCounts] = useState({});
 
   useEffect(() => {
     // Function to load cart items from AsyncStorage
@@ -12,9 +13,14 @@ const Cart = () => {
         const cartData = await AsyncStorage.getItem("cart");
         if (cartData) {
           const parsedCartData = JSON.parse(cartData);
-          // Filter out any null or invalid items
           const validItems = parsedCartData.filter(item => item !== null && item !== undefined);
           setCartItems(validItems);
+          
+          // Load item counts separately
+          const itemCountsData = await AsyncStorage.getItem("itemCounts");
+          if (itemCountsData) {
+            setItemCounts(JSON.parse(itemCountsData));
+          }
         }
       } catch (error) {
         console.error("Error loading cart items:", error);
@@ -23,6 +29,35 @@ const Cart = () => {
 
     loadCartItems();
   }, []);
+
+  const updateItemCount = async (itemName, newCount) => {
+    const updatedCounts = { ...itemCounts, [itemName]: newCount };
+    setItemCounts(updatedCounts);
+
+    try {
+      await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
+    } catch (error) {
+      console.error("Error storing item counts:", error);
+    }
+  };
+
+  const updateCartItemQuantity = async (productId, increment) => {
+    try {
+      const updatedItems = cartItems.map(item => {
+        if (item.productId === productId) {
+          const newQuantity = Math.max(item.quantity + increment, 0); // Ensure quantity does not go below 0
+          updateItemCount(item.productId, newQuantity); // Update AsyncStorage with new quantity
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+
+      setCartItems(updatedItems);
+      await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error("Error updating cart item quantity:", error);
+    }
+  };
 
   // If cart is empty
   if (cartItems.length === 0) {
@@ -48,9 +83,23 @@ const Cart = () => {
                 <Image source={{ uri: item.image }} style={styles.itemImage} />
               ) : null}
               <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>{item.productId && item.name}</Text>
-                <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+                <Text style={styles.itemName}>{item.name || "Unknown Item"}</Text>
                 <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
+                <View style={styles.counterContainer}>
+                  <TouchableOpacity
+                    style={styles.counterButton}
+                    onPress={() => updateCartItemQuantity(item.productId, -1)}
+                  >
+                    <Text style={styles.counterText}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.counterText}>{item.quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.counterButton}
+                    onPress={() => updateCartItemQuantity(item.productId, 1)}
+                  >
+                    <Text style={styles.counterText}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           ) : null
@@ -118,14 +167,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
   },
-  itemQuantity: {
-    fontSize: 16,
-    color: "#666",
-  },
   itemPrice: {
     fontSize: 16,
     color: "#333",
     marginTop: 5,
+  },
+  counterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  counterButton: {
+    backgroundColor: "#ddd",
+    padding: 10,
+    borderRadius: 4,
+    marginHorizontal: 8,
+  },
+  counterText: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
   buyNowButton: {
     backgroundColor: "#4CAF50",
