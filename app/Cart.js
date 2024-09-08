@@ -59,6 +59,13 @@ const Cart = () => {
     }
   };
 
+ 
+  function calculateTotalPrice(){
+   return cartItems.reduce((acc,curr)=>{
+  return acc+(curr.quantity*curr.price)
+   },0)
+  };
+
   // If cart is empty
   if (cartItems.length === 0) {
     return (
@@ -105,24 +112,26 @@ const Cart = () => {
           ) : null
         )}
       />
-      <View style={styles.btn}>
-      <TouchableOpacity
-        style={styles.PickupButton}
-        onPress={() => console.log("I will pickup pressed")}
-      >
-        <Text style={styles.PickText}>Pickup</Text>
-       
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buyNowButton}
-        onPress={() => console.log("Buy Now pressed")}
-      >
-        <Text style={styles.buyNowText}>Deliver</Text>
-       
-      </TouchableOpacity>
 
+      {/* Total Price */}
+      <Text style={styles.totalPrice}>
+        Total Price: ₹{calculateTotalPrice()}
+      </Text>
+
+      <View style={styles.btn}>
+        <TouchableOpacity
+          style={styles.PickupButton}
+          onPress={() => console.log("I will pickup pressed")}
+        >
+          <Text style={styles.PickText}>Pickup</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buyNowButton}
+          onPress={() => console.log("Buy Now pressed")}
+        >
+          <Text style={styles.buyNowText}>Deliver</Text>
+        </TouchableOpacity>
       </View>
-    
     </View>
   );
 };
@@ -134,10 +143,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   btn:{
- flexDirection:"row",
- alignItems:"center",
- justifyContent:"center",
- gap:20
+    flexDirection:"row",
+    alignItems:"center",
+    justifyContent:"center",
+    gap:20,
   },
   itemCount: {
     fontSize: 18,
@@ -205,6 +214,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+  totalPrice: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginVertical: 10,
+    textAlign: "center",
+  },
   buyNowButton: {
     backgroundColor: "#4CAF50",
     padding: 15,
@@ -212,7 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
-    width:150
+    width:150,
   },
   PickupButton: {
     backgroundColor: "white",
@@ -222,13 +238,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
     width:150,
-    borderWidth:1
+    borderWidth:1,
   },
   PickText: {
     color: "green",
     fontSize: 18,
     fontWeight: "bold",
-  
   },
   buyNowText: {
     color: "#fff",
