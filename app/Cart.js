@@ -105,12 +105,24 @@ const Cart = () => {
           ) : null
         )}
       />
+      <View style={styles.btn}>
+      <TouchableOpacity
+        style={styles.PickupButton}
+        onPress={() => console.log("I will pickup pressed")}
+      >
+        <Text style={styles.PickText}>Pickup</Text>
+       
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.buyNowButton}
         onPress={() => console.log("Buy Now pressed")}
       >
-        <Text style={styles.buyNowText}>Buy Now</Text>
+        <Text style={styles.buyNowText}>Deliver</Text>
+       
       </TouchableOpacity>
+
+      </View>
+    
     </View>
   );
 };
@@ -120,6 +132,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f9f9f9",
+  },
+  btn:{
+ flexDirection:"row",
+ alignItems:"center",
+ justifyContent:"center",
+ gap:20
   },
   itemCount: {
     fontSize: 18,
@@ -194,6 +212,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 20,
+    width:150
+  },
+  PickupButton: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+    width:150,
+    borderWidth:1
+  },
+  PickText: {
+    color: "green",
+    fontSize: 18,
+    fontWeight: "bold",
+  
   },
   buyNowText: {
     color: "#fff",
