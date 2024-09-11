@@ -43,21 +43,23 @@ const Cart = () => {
 
   const updateCartItemQuantity = async (productId, increment) => {
     try {
-      const updatedItems = cartItems.map(item => {
-        if (item.productId === productId) {
-          const newQuantity = Math.max(item.quantity + increment, 0); // Ensure quantity does not go below 0
-          updateItemCount(item.productId, newQuantity); // Update AsyncStorage with new quantity
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      });
-
+      const updatedItems = cartItems
+        .map(item => {
+          if (item.productId === productId) {
+            const newQuantity = Math.max(item.quantity + increment, 0); 
+            updateItemCount(item.productId, newQuantity); 
+            return { ...item, quantity: newQuantity };
+          }
+          return item;
+        })
+        .filter(item => item.quantity > 0);
       setCartItems(updatedItems);
       await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
     } catch (error) {
       console.error("Error updating cart item quantity:", error);
     }
   };
+
 
  
   function calculateTotalPrice(){
@@ -203,6 +205,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
+    borderWidth:1,
+    width:100,
+    flex:1,
+    borderRadius:10,
+    justifyContent:"space-between"
   },
   counterButton: {
     backgroundColor: "#ddd",
@@ -213,6 +220,7 @@ const styles = StyleSheet.create({
   counterText: {
     fontSize: 20,
     fontWeight: "bold",
+    
   },
   totalPrice: {
     fontSize: 20,

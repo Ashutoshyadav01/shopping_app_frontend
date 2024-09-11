@@ -287,7 +287,7 @@ function SearchItems({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      <Text>{filteredItems.length} {filteredItems.length > 1 ? "items found" : "item found"}</Text>
+      <Text style={{fontWeight:"bold", height:40}}>{filteredItems.length} {filteredItems.length > 1 ? "items found" : "item found"}</Text>
       {filteredItems.length > 0 ? (
         
  <FlatList
