@@ -240,25 +240,40 @@ function SearchItems({ navigation, route }) {
 
     loadItemCounts();
   }, []);
-
-  const storeItemInCart = async (productId, quantity) => {
+  const storeItemInCart = async (item, quantity) => {
     try {
-      const cartItem = { productId, quantity };
+      const cartItem = {
+        productId: item.productId,
+        quantity,
+        name: item.name, 
+        price: item.price,
+        discount: item.discount,
+        image: item.image,
+      };
+  
       const existingCart = await AsyncStorage.getItem("cart");
       let cart = existingCart ? JSON.parse(existingCart) : [];
-      const itemIndex = cart.findIndex((item) => item.productId === productId);
+  
+      // Find the index of the item in the cart
+      const itemIndex = cart.findIndex(cartItem => cartItem.productId === item.productId);
+      
+      // Update quantity if the item exists in the cart, otherwise add it
       if (itemIndex > -1) {
         cart[itemIndex].quantity = quantity;
       } else {
         cart.push(cartItem);
       }
+  
+      // Save updated cart and item counts to AsyncStorage
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
       await AsyncStorage.setItem("itemCounts", JSON.stringify(itemCounts));
+  
       console.log("Cart updated:", cart);
     } catch (error) {
       console.error("Error storing item in cart:", error);
     }
   };
+  
 
   const increaseCount = (itemName) => {
     setItemCounts((prevCounts) => ({
@@ -277,14 +292,14 @@ function SearchItems({ navigation, route }) {
   const handleAddToCart = (item) => {
     const quantity = itemCounts[item.name] || 0;
     if (quantity > 0) {
-      storeItemInCart(item.productId, quantity);
-      setItemCounts((prevCounts) => ({ ...prevCounts, [item.name]: 0 }));
+      storeItemInCart(item, quantity); // Pass item and quantity
+      setItemCounts((prevCounts) => ({ ...prevCounts, [item.name]: 0 })); // Reset count after adding to cart
       alert("Item added to cart!");
     } else {
       alert("Please select at least one item.");
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={{fontWeight:"bold", height:40}}>{filteredItems.length} {filteredItems.length > 1 ? "items found" : "item found"}</Text>
