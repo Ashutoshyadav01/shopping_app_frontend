@@ -64,7 +64,16 @@ if(matchedCoupon)
       </TouchableOpacity>
    
     </View>
-    <View style={{borderWidth:1,margin:20}}>
+    <View style={{ backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 20,
+    }}>
     <View style={{flexDirection:"row",justifyContent:"space-around",margin:20,borderBottomWidth:1}}>
       <Text>Sub-total</Text>
       <Text>Price: ₹{totalPrice}</Text>
