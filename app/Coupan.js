@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, FlatList, StyleSheet, Image,TextInput, TouchableOpacity } from "react-native";
 import { useState } from 'react';
 discountList = [
@@ -10,7 +10,7 @@ discountList = [
     MINIMUM_SUBTOTAL: 1000
   },
   {
-    COUPON_NAME: "Saturday Dhamaka",
+    COUPON_NAME: " Big Billion Day",
     COUPON_CODE: "SAT0101",
     DISCOUNT_TYPE: "PERCENT",
     DISCOUNT_VALUE: 2,
@@ -20,12 +20,30 @@ discountList = [
   ]
   
   
-const Coupon = () => {
+const Coupon = ({route}) => {
+  let {totalPrice}=route.params;
   const [Content,setContent]=useState("");
+  const [applied,setApplied]=useState(false)
+  const [tot,setTot]=useState(totalPrice)
   const matchedCoupon = discountList.find(
     (coupon) => coupon.COUPON_CODE.toLowerCase() === Content.toLowerCase()
   );
-  
+function applycoupon()
+{
+  if(totalPrice>matchedCoupon.MINIMUM_SUBTOTAL)
+  {
+if(matchedCoupon)
+{
+  setApplied(true);
+ 
+  setTot(totalPrice-matchedCoupon.DISCOUNT_VALUE);
+}
+  }
+  else{
+    alert("Total Price should be more than: "+matchedCoupon.MINIMUM_SUBTOTAL)
+  }
+
+}
   return (
    <View>
     <View style={{flexDirection:"row", justifyContent:"space-between"}}>
@@ -36,7 +54,9 @@ const Coupon = () => {
       onChangeText={setContent}
       
       />
-      <TouchableOpacity style={{backgroundColor:"green",flex:1, justifyContent:"center",alignItems:"center", }}>
+      <TouchableOpacity style={{backgroundColor:"green",flex:1, justifyContent:"center",alignItems:"center" }}
+      onPress={applycoupon}
+      >
       <Text style={{color:"white",fontWeight:"600"}}>
         Apply
       </Text>
@@ -44,16 +64,25 @@ const Coupon = () => {
       </TouchableOpacity>
    
     </View>
-    
-    <View><Text> {(matchedCoupon)?`Discount name: ${matchedCoupon.COUPON_NAME},Discount type: ${matchedCoupon.DISCOUNT_TYPE},Discount value: ${matchedCoupon.DISCOUNT_VALUE}` :"Enter right Coupan"}</Text></View>
-     <FlatList
-     data={discountList}
-     keyExtractor={(item)=>item.COUPON_CODE}
-     renderItem={({item})=>(
-      <Text>{item.COUPON_NAME}</Text>
-  )}
-    
-     />
+    <View style={{borderWidth:1,margin:20}}>
+    <View style={{flexDirection:"row",justifyContent:"space-around",margin:20,borderBottomWidth:1}}>
+      <Text>Sub-total</Text>
+      <Text>Price: ₹{totalPrice}</Text>
+   </View>
+   <View style={{flexDirection:"row",justifyContent:"space-around",width:300,alignItems:"center",margin:20,borderBottomWidth:1}}>
+    <Text>
+    Coupon Code Status:
+      </Text>
+<Text>{applied?"Applied":"not Applied"}</Text>
+   </View>
+   <View style={{flexDirection:"row",justifyContent:"space-around",width:300,alignItems:"center",margin:20,borderBottomWidth:1}} >
+    <Text>On discount:</Text>
+    <Text> ₹{tot}</Text>
+   </View>
+
+      
+    </View>
+
    </View>
   )
 }

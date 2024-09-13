@@ -27,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>BINIE</Text>
-        <Text style={styles.subHeaderText}>SHOP SMILE REPEAT</Text>
+        <Text style={styles.subHeaderText}>BUY SMILE REPEAT</Text>
       </View>
 
       <View style={styles.searchContainer}>

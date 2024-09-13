@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,7 @@ const Cart = ({navigation}) => {
   const [itemCounts, setItemCounts] = useState({});
   const freeAmt = 250;
   const deliveryCharge = calculateTotalPrice() < freeAmt ? 19 : 0;
+  const totalPrice= calculateTotalPrice();
 
   useEffect(() => {
     const loadCartItems = async () => {
@@ -127,7 +128,7 @@ const Cart = ({navigation}) => {
       {/* Total Price */}
       <View style={styles.totalPrice}>
         <Text>Apply coupon</Text>
-        <TouchableOpacity onPress={()=>{navigation.navigate("Coupan")}}>
+        <TouchableOpacity onPress={()=>{navigation.navigate("Coupan",{totalPrice})}}>
         <Text style={{color:"orange",zIndex:1,position:"relative"}}>Select</Text>
         </TouchableOpacity>
        
