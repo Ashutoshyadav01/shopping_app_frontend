@@ -82,6 +82,7 @@ const Cart = ({navigation}) => {
     return (
       <View style={styles.container}>
         <Text style={styles.emptyText}>Your cart is empty</Text>
+       
       </View>
     );
   }
@@ -128,7 +129,7 @@ const Cart = ({navigation}) => {
       {/* Total Price */}
       <View style={styles.totalPrice}>
         <Text>Apply coupon</Text>
-        <TouchableOpacity onPress={()=>{navigation.navigate("Coupan",{totalPrice})}}>
+        <TouchableOpacity onPress={()=>{navigation.navigate("Coupon",{totalPrice})}}>
         <Text style={{color:"orange",zIndex:1,position:"relative"}}>Select</Text>
         </TouchableOpacity>
        
