@@ -32,7 +32,7 @@ return x;
         disabled={isButtonDisabled}
         onPress={()=>{
           const otp=randomNum();
-          navigation.navigate("Otp",{otp,input})
+          navigation.navigate("OtpSignin",{otp,input})
         }}
         >
           <Text style={styles.buttonText}>Request OTP</Text>

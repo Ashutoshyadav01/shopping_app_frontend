@@ -9,227 +9,36 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const items = {
-  1: [
-    {
-      productId: "1", // Unique product ID
-      name: "Kaju Katli",
-      image:
-        "https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "2", // Unique product ID
-      name: "Rasgulla",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "3", // Unique product ID
-      name: "Gulab Jamun",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  2: [
-    {
-      productId: "4", // Unique product ID
-      name: "Shampoo",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "5", // Unique product ID
-      name: "Soap",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "6", // Unique product ID
-      name: "Pepsodent Toothpaste",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "7", // Unique product ID
-      name: "Sensodyne Toothpaste",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "8", // Unique product ID
-      name: "Colgate Toothbrush",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  3: [
-    {
-      productId: "9", // Unique product ID
-      name: "Basmati Rice",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "10", // Unique product ID
-      name: "Brown Rice",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "11", // Unique product ID
-      name: "Chana Dal",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "12", // Unique product ID
-      name: "Wheat Flour",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "13", // Unique product ID
-      name: "Atta",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  4: [
-    {
-      productId: "14", // Unique product ID
-      name: "Coca-Cola",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "15", // Unique product ID
-      name: "Maaza",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "16", // Unique product ID
-      name: "Coffee",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  5: [
-    {
-      productId: "17", // Unique product ID
-      name: "Lays",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "18", // Unique product ID
-      name: "KurKure",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "19", // Unique product ID
-      name: "Pringles",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  6: [
-    {
-      productId: "20", // Unique product ID
-      name: "Apples",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "21", // Unique product ID
-      name: "Bananas",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "22", // Unique product ID
-      name: "Tomatoes",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-};
 
-const subcategory = [
-  // Your existing subcategory data
-  { id: "7", parent_category_id: 3, name: "Dal", image: "image URL" },
-  { id: "8", parent_category_id: 3, name: "Rice", image: "image URL" },
-  { id: "9", parent_category_id: 3, name: "Atta", image: "image URL" },
-  { id: "10", parent_category_id: 1, name: "Rasgulla", image: "image URL" },
-  {
-    id: "11",
-    parent_category_id: 2,
-    name: "Bath Soap & Shower Gel",
-    image: "image URL",
-  },
-  { id: "12", parent_category_id: 2, name: "Toothpaste", image: "image URL" },
-  { id: "13", parent_category_id: 4, name: "Soft Drink", image: "image URL" },
-]
+const API_PRODUCT_LIST = "https://akm0505.bsite.net/api/GetProductList/";
+
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
   const [allItems, setAllItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
   const [Count, setCount] = useState(0);
+  const [sub_cat, setSub_cat] = useState([]);
 
   // Initializing items and AsyncStorage data on component mount
   useEffect(() => {
     if (category) {
-      const categoryItems = items[category.id] || [];
-      setFilteredItems(categoryItems);
-      setAllItems(categoryItems);
-      setCount(categoryItems.length);
+      fetch(API_PRODUCT_LIST + category.CategoryId)
+        .then((item) => item.json())
+        .then((res) => {
+          console.log("Full API response:", res);
+          console.log("Product list", res.Table);
+          console.log("Category details", res.Table1);
+          setFilteredItems(res.Table);
+          setAllItems(res.Table);
+          setCount(res.Table.length);
+          if (res.Table1) {
+            console.log("Category details found:", res.Table1);
+            setSub_cat(res.Table1);
+          } else {
+            console.log("No category details found.");
+          }
+        });
     }
 
     const loadItemCounts = async () => {
@@ -246,53 +55,42 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     loadItemCounts();
   }, [category]);
 
-  // Filtering based on subcategory
-  const sub_cat = subcategory.filter(
-    (item) => item.parent_category_id == category.id
-  );
-
   // Handling filter by subcategory name
-  function handleFilter(name) {
-    const filtered = allItems.filter((item) =>
-      item.name.toLowerCase().includes(name.toLowerCase())
-    );
+  function handleFilter(id) {
+    const filtered = allItems.filter((item)=>item.SubCategoryId===id);
     setFilteredItems(filtered);
     setCount(filtered.length);
   }
 
-  // Showing all items when the "All" button is pressed
   function showAllItems() {
     setFilteredItems(allItems);
     setCount(allItems.length);
   }
 
+  // Storing items in cart
   const storeItemInCart = async (productId, quantity, itemDetails) => {
     if (quantity <= 0) {
       console.warn("Cannot add items with zero quantity to the cart.");
-      return; // Avoid adding items with zero or negative quantity
+      return;
     }
     try {
       const cartItem = { productId, quantity, ...itemDetails };
       const existingCart = await AsyncStorage.getItem("cart");
       let cart = existingCart ? JSON.parse(existingCart) : [];
-    
-      // Check if the item is already in the cart
+
       const itemIndex = cart.findIndex((item) => item.productId === productId);
       if (itemIndex > -1) {
-        // Update the quantity and item details if the item already exists
         cart[itemIndex] = { ...cart[itemIndex], quantity, ...itemDetails };
       } else {
-        // Add new item to the cart
         cart.push(cartItem);
       }
-    
+
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
       console.log("Cart updated:", cart);
     } catch (error) {
       console.error("Error storing item in cart:", error);
     }
   };
-  
 
   // Function to update item count and store it in AsyncStorage
   const updateItemCount = async (itemName, newCount) => {
@@ -311,48 +109,58 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       <Text style={styles.title}>{category.name}</Text>
 
       <FlatList
-        data={[{ id: "0", name: "All" }, ...sub_cat]}
-        horizontal={true}
-        style={styles.buttons}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              item.id === "0" ? showAllItems() : handleFilter(item.name)
-            }
-          >
-            <Text style={styles.subcategoryButtonText}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+  data={[{ id: "0", name: "All" }, ...sub_cat]}
+  horizontal={true}
+  style={styles.buttons}
+  contentContainerStyle={{ paddingHorizontal: 10 }} // Add padding if needed
+  showsHorizontalScrollIndicator={false} // To hide the scrollbar for better UI
+  keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      style={styles.subcategoryButton}
+      onPress={() =>
+        item.id === "0" ? showAllItems() : handleFilter(item.SubCategoryId)
+      }
+    >
+      <Text style={styles.subcategoryButtonText}>
+        {item.name || item.CategoryName}
+      </Text>
+    </TouchableOpacity>
+  )}
+/>
 
-      <Text>
+      <Text style={{marginLeft:15,fontWeight:"bold"}}>
         {Count} {Count > 1 ? "Items in the list" : "Item in the list "}
       </Text>
 
       <FlatList
         data={filteredItems}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => index.toString()} // Fixed toString issue
         contentContainerStyle={styles.itemList}
         renderItem={({ item }) => {
-          const itemCount = itemCounts[item.name] || 0;
+          const itemCount = itemCounts[item.ProductName] || 0;
 
           return (
             <TouchableOpacity
               onPress={() => navigation.navigate("ProductDetail", { item })}
             >
               <View style={styles.itemContainer}>
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
+                <Image
+                  source={{ uri: item.ProductThumbnail }}
+                  style={styles.itemImage}
+                />
                 <View style={styles.text}>
-                  <Text style={styles.itemText1}>{item.name}</Text>
-                  <Text style={styles.itemText2}>Price: ₹{item.price}</Text>
+                  <Text style={styles.itemText1}>{item.ProductName}</Text>
+                  <Text style={styles.itemText2}>
+                    Price: ₹{item.ProductSellingPrice}
+                  </Text>
                   <Text style={styles.itemText3}>{item.discount}</Text>
                 </View>
                 <View style={styles.item3}>
                   <TouchableOpacity
                     onPress={() => {
                       const newCount = itemCount + 1;
-                      updateItemCount(item.name, newCount);
+                      updateItemCount(item.ProductName, newCount);
                     }}
                   >
                     <Icon
@@ -366,7 +174,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                   <TouchableOpacity
                     onPress={() => {
                       const newCount = itemCount > 0 ? itemCount - 1 : 0;
-                      updateItemCount(item.name, newCount);
+                      updateItemCount(item.ProductName, newCount);
                     }}
                   >
                     <Icon
@@ -377,27 +185,26 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-  onPress={() => {
-    if (item.productId) {
-      storeItemInCart(item.productId, itemCount, {
-        name: item.name,
-        price: item.price,
-        discount: item.discount,
-        image: item.image,
-      }); // Pass product details along with the quantity
-    } else {
-      console.warn("Invalid productId, cannot add to cart.");
-    }
-  }}
->
-  <Icon
-    name="shopping-cart"
-    size={24}
-    color="green"
-    style={styles.iconCart}
-  />
-</TouchableOpacity>
-
+                    onPress={() => {
+                      if (item.productId) {
+                        storeItemInCart(item.productId, itemCount, {
+                          name: item.ProductName,
+                          price: item.ProductSellingPrice,
+                          discount: item.discount,
+                          image: item.ProductThumbnail,
+                        });
+                      } else {
+                        console.warn("Invalid productId, cannot add to cart.");
+                      }
+                    }}
+                  >
+                    <Icon
+                      name="shopping-cart"
+                      size={24}
+                      color="green"
+                      style={styles.iconCart}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
             </TouchableOpacity>
@@ -412,8 +219,8 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#fff",
+
   },
   title: {
     fontSize: 24,
@@ -422,10 +229,12 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginBottom: 10,
-    display:"flex"
+    display: "flex",
+    height:40
   },
   itemList: {
     paddingTop: 0,
+    marginTop:10
   },
   itemContainer: {
     flexDirection: "row",
@@ -466,13 +275,28 @@ const styles = StyleSheet.create({
   },
   iconCart: {
     marginLeft: 10,
+    marginRight:20
   },
+  subcategoryButton: {
+    flex:1,
+    paddingTop:0,
+    marginRight: 10,           // Separate buttons horizontally
+  paddingVertical: 2,        // Adjust padding to give space for text height
+  paddingHorizontal: 12,     // Horizontal padding for more space for text
+  borderRadius: 8,
+  backgroundColor: 'grey',
+  minWidth: 20,              // Ensures the button has a minimum width
+  justifyContent: 'center',  // Centers the text vertically
+  alignItems: 'center',  
+  height:30,    
+  marginBottom:12
+  },
+
+  
   subcategoryButtonText: {
-    backgroundColor: "grey",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    color: "white",
+    color: 'white',
+  fontSize: 16,
+  textAlign: 'center', 
   },
 });
 

@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function SignUpPage({ navigation }) {
     const [input, setInput] = useState("");
+    const [name,setName]=useState("")
 
     function randomNum() {
         const min = 1000;
@@ -18,22 +19,8 @@ function SignUpPage({ navigation }) {
     const handleSignup = async () => {
         const otp = randomNum();
     
-        try {
-           
-          
-            const existingNumbers = await AsyncStorage.getItem('phoneNumbers');
-            let phoneNumbers = existingNumbers ? JSON.parse(existingNumbers) : [];
-    
-            phoneNumbers.push(input);
-           
-            await AsyncStorage.setItem('phoneNumbers', JSON.stringify(phoneNumbers));
-            console.log('Phone numbers saved to AsyncStorage', phoneNumbers);
-    
-        } catch (error) {
-            console.error('Failed to save the data to the storage', error);
-        }
-    
-        navigation.navigate("Otp", { otp, input });
+       console.log(name)
+        navigation.navigate("Otp", { otp, input,name });
     };
     
 
@@ -43,6 +30,8 @@ function SignUpPage({ navigation }) {
                 <TextInput
                     style={styles.input}
                     placeholder="Enter Your Full Name"
+                    value={name}
+                    onChangeText={setName}
                 />
                 <TextInput
                     style={styles.input}

@@ -1,14 +1,14 @@
-import React, { useState, useEffect} from "react";
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Cart = ({navigation}) => {
+const Cart = ({ navigation }) => {
   const [cartItems, setCartItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0); // Added for coupon discount
   const freeAmt = 250;
-  const deliveryCharge = calculateTotalPrice() < freeAmt ? 19 : 0;
-  const totalPrice= calculateTotalPrice();
 
   useEffect(() => {
     const loadCartItems = async () => {
@@ -39,50 +39,52 @@ const Cart = ({navigation}) => {
     try {
       await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
     } catch (error) {
-      console.error("Error storing item counts:", error);
+      console.error("Error updating item counts:", error);
     }
   };
 
   const updateCartItemQuantity = async (productId, increment) => {
-    try {
-      const updatedItems = cartItems
-        .map(item => {
-          if (item.productId === productId) {
-            const newQuantity = Math.max(item.quantity + increment, 0);
-            updateItemCount(item.productId, newQuantity);
-            return { ...item, quantity: newQuantity };
-          }
-          return item;
-        })
-        .filter(item => item.quantity > 0);
-      setCartItems(updatedItems);
-      await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
-    } catch (error) {
-      console.error("Error updating cart item quantity:", error);
-    }
+    const updatedItems = cartItems.map(item => {
+      if (item.productId === productId) {
+        const newQuantity = Math.max(item.quantity + increment, 0);
+        updateItemCount(item.productId, newQuantity);
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    }).filter(item => item.quantity > 0);
+
+    setCartItems(updatedItems);
+    await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
   };
 
   const removeCartItem = async (productId) => {
-    try {
-      const updatedItems = cartItems.filter(item => item.productId !== productId);
-      setCartItems(updatedItems);
-      await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
+    const updatedItems = cartItems.filter(item => item.productId !== productId);
+    setCartItems(updatedItems);
+    await AsyncStorage.setItem("cart", JSON.stringify(updatedItems));
+  };
+
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((acc, curr) => acc + curr.quantity * curr.price, 0);
+  };
+
+  const handleApplyCoupon = () => {
+    if (couponCode === "DISCOUNT10") {
+      setDiscount(10);
+    } else {
+      setDiscount(0); // No discount for invalid coupon
     }
   };
 
-  function calculateTotalPrice() {
-    return cartItems.reduce((acc, curr) => {
-      return acc + curr.quantity * curr.price;
-    }, 0);
-  }
+  const calculateDiscountedPrice = () => {
+    const total = calculateTotalPrice();
+    return total - (total * discount) / 100;
+  };
 
   if (cartItems.length === 0) {
     return (
       <View style={styles.container}>
+        <Image style={{ width: 300, height: 400 }} source={require("./EmptyCart.png")} />
         <Text style={styles.emptyText}>Your cart is empty</Text>
-       
       </View>
     );
   }
@@ -93,52 +95,62 @@ const Cart = ({navigation}) => {
       <Text style={styles.itemCount}>Total items in cart: {cartItems.length}</Text>
       <FlatList
         data={cartItems}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) =>
-          item ? (
-            <View style={styles.cartItem}>
-              {item.image ? <Image source={{ uri: item.image }} style={styles.itemImage} /> : null}
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>{item.name || "Unknown Item"}</Text>
-                <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
-              </View>
-              <View style={styles.controlsContainer}>
-                <View style={styles.counterContainer}>
-                  <TouchableOpacity
-                    style={styles.counterButtonminus}
-                    onPress={() => updateCartItemQuantity(item.productId, -1)}
-                  >
-                    <Text style={styles.counterText}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.counterText}>{item.quantity}</Text>
-                  <TouchableOpacity
-                    style={styles.counterButton}
-                    onPress={() => updateCartItemQuantity(item.productId, 1)}
-                  >
-                    <Text style={styles.counterText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={() => removeCartItem(item.productId)} style={styles.trashIconContainer}>
-                  <Icon name="trash" size={30} color="#900" style={{color:"grey",marginRight:5}} />
+        keyExtractor={(item) => item.productId}
+        renderItem={({ item }) => (
+          <View style={styles.cartItem}>
+            {item.image ? <Image source={{ uri: item.image }} style={styles.itemImage} /> : null}
+            <View style={styles.itemDetails}>
+              <Text style={styles.itemName}>{item.name || "Unknown Item"}</Text>
+              <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
+            </View>
+            <View style={styles.controlsContainer}>
+              <View style={styles.counterContainer}>
+                <TouchableOpacity
+                  style={styles.counterButtonminus}
+                  onPress={() => updateCartItemQuantity(item.productId, -1)}
+                >
+                  <Text style={styles.counterText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.counterText}>{item.quantity}</Text>
+                <TouchableOpacity
+                  style={styles.counterButton}
+                  onPress={() => updateCartItemQuantity(item.productId, 1)}
+                >
+                  <Text style={styles.counterText}>+</Text>
                 </TouchableOpacity>
               </View>
+              <TouchableOpacity onPress={() => removeCartItem(item.productId)} style={styles.trashIconContainer}>
+                <Icon name="trash" size={30} color="#900" style={{ color: "grey", marginRight: 5 }} />
+              </TouchableOpacity>
             </View>
-          ) : null
-        }
+          </View>
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
-      {/* Total Price */}
-      <View style={styles.totalPrice}>
-        <Text>Apply coupon</Text>
-        <TouchableOpacity onPress={()=>{navigation.navigate("Coupon",{totalPrice})}}>
-        <Text style={{color:"orange",zIndex:1,position:"relative"}}>Select</Text>
+      
+      {/* Apply Coupon Section */}
+      <View style={styles.couponContainer}>
+        <TextInput
+          style={styles.couponInput}
+          placeholder="Enter Coupon Code"
+          value={couponCode}
+          onChangeText={setCouponCode}
+        />
+        <TouchableOpacity style={styles.applyCouponButton} onPress={handleApplyCoupon}>
+          <Text style={styles.applyCouponText}>Apply Coupon</Text>
         </TouchableOpacity>
-       
       </View>
+
+      {/* Bill and Total Price */}
       <View style={styles.bill}>
-        <Text style={{fontWeight:"600"}}>Bill Details</Text>
+        <Text style={{ fontWeight: "600" }}>Bill Details</Text>
         <View style={styles.total}>
           <Text>Sub Total</Text>
           <Text style={{ fontWeight: "500" }}>₹{calculateTotalPrice()}</Text>
+        </View>
+        <View style={styles.total}>
+          <Text>Discount</Text>
+          <Text style={{ fontWeight: "500" }}>₹{(calculateTotalPrice() * discount) / 100}</Text>
         </View>
         <View style={styles.total}>
           <Text>Tax</Text>
@@ -146,13 +158,14 @@ const Cart = ({navigation}) => {
         </View>
         <View style={styles.total}>
           <Text>Delivery Charge</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
+          <Text style={{ fontWeight: "500" }}>{calculateDiscountedPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
         </View>
         <View style={styles.total}>
           <Text>Payable</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
+          <Text style={{ fontWeight: "500" }}>{calculateDiscountedPrice() + (calculateDiscountedPrice() < freeAmt ? 19 : 0)}</Text>
         </View>
       </View>
+      
       <View style={styles.btn}>
         <TouchableOpacity style={styles.PickupButton} onPress={() => console.log("I will pickup pressed")}>
           <Text style={styles.PickText}>Pickup</Text>
@@ -188,7 +201,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 1,
     padding: 10,
-    
   },
   title: {
     fontSize: 26,
@@ -234,7 +246,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     marginTop: 5,
-  
   },
   controlsContainer: {
     flexDirection: "row",
@@ -246,71 +257,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor:"green",
-    color:"green",
+    borderColor: "green",
     borderRadius: 10,
     justifyContent: "space-between",
     width: 100,
-
   },
   counterButtonminus: {
     borderRightWidth: 1,
     padding: 10,
-       color:"green",
     borderRadius: 4,
   },
   counterButton: {
     borderLeftWidth: 1,
     padding: 10,
     borderRadius: 4,
-       color:"green"
   },
   counterText: {
     fontSize: 20,
     fontWeight: "bold",
-    color:"green"
+    color: "green"
   },
   trashIconContainer: {
     marginLeft: 11,
     justifyContent: "center",
     alignItems: "center",
-    
-  },
-  totalPrice: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    borderWidth:1,
-    borderRadius:10
-  },
-  buyNowButton: {
-    backgroundColor: "#4CAF50",
-    padding: 15,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-    width: 150,
-  },
-  PickupButton: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 20,
-    width: 150,
-    borderWidth: 1,
-  },
-  PickText: {
-    color: "green",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  buyNowText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   bill: {
     backgroundColor: "#fff",
@@ -322,6 +292,54 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     marginTop: 20,
+  },
+  buyNowButton: {
+    backgroundColor: "#4CAF50",
+    padding: 15,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+  },
+  buyNowText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  PickupButton: {
+    backgroundColor: "#2196F3",
+    padding: 15,
+    borderRadius: 5,
+    flex: 1,
+  },
+  PickText: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  couponContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  couponInput: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 10,
+  },
+  applyCouponButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  applyCouponText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 

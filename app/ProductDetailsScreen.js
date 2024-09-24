@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductDetailsScreen = ({ route, navigation }) => {
   const { item } = route.params; 
-  const [newImg, setNewimg] = useState(item.image);
+  const [newImg, setNewimg] = useState(item.ProductThumbnail);
   const [itemCounts, setItemCounts] = useState({});
   const [itemCount, setItemCount] = useState(0);
 
@@ -96,8 +96,8 @@ const ProductDetailsScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Image source={{ uri: newImg }} style={styles.image} />
       <View style={styles.infoContainer}>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>₹{item.price}</Text>
+        <Text style={styles.itemName}>{item.ProductName}</Text>
+        <Text style={styles.itemPrice}>₹{item.ProductSellingPrice}</Text>
         <View style={styles.counterContainer}>
           <TouchableOpacity
             style={styles.counterButton}

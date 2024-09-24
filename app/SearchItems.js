@@ -7,224 +7,15 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
-import Icon from 'react-native-vector-icons/Ionicons'; // Ensure you have this installed
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const items = {
-  1: [
-    {
-      productId: "1", // Unique product ID
-      name: "Kaju Katli",
-      image:
-        "https://img.cdnx.in/358917/sweets-1717750278332.jpeg?width=384&format=webp",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "2", // Unique product ID
-      name: "Rasgulla",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "3", // Unique product ID
-      name: "Gulab Jamun",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  2: [
-    {
-      productId: "4", // Unique product ID
-      name: "Shampoo",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "5", // Unique product ID
-      name: "Soap",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "6", // Unique product ID
-      name: "Pepsodent Toothpaste",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "7", // Unique product ID
-      name: "Sensodyne Toothpaste",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "8", // Unique product ID
-      name: "Colgate Toothbrush",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  3: [
-    {
-      productId: "9", // Unique product ID
-      name: "Basmati Rice",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "10", // Unique product ID
-      name: "Brown Rice",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "11", // Unique product ID
-      name: "Chana Dal",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "12", // Unique product ID
-      name: "Wheat Flour",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "13", // Unique product ID
-      name: "Atta",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  4: [
-    {
-      productId: "14", // Unique product ID
-      name: "Coca-Cola",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "15", // Unique product ID
-      name: "Maaza",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "16", // Unique product ID
-      name: "Coffee",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  5: [
-    {
-      productId: "17", // Unique product ID
-      name: "Lays",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "18", // Unique product ID
-      name: "KurKure",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "19", // Unique product ID
-      name: "Pringles",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-  6: [
-    {
-      productId: "20", // Unique product ID
-      name: "Apples",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "21", // Unique product ID
-      name: "Bananas",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-    {
-      productId: "22", // Unique product ID
-      name: "Tomatoes",
-      image: "https://via.placeholder.com/100",
-      price: "300",
-      op: "400",
-      discount: "20%",
-    },
-  ],
-};
-
-
-
-function SearchItems({ navigation, route }) {
+const SearchItems = ({ navigation, route }) => {
   const { searchQuery } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
-
-  useEffect(() => {
-    if (searchQuery) {
-      const results = [];
-      Object.keys(items).forEach((categoryName) => {
-        const matchingItems = items[categoryName].filter((item) =>
-          item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (matchingItems.length > 0) {
-          results.push(...matchingItems);
-        }
-      });
-      setFilteredItems(results);
-    } else {
-      setFilteredItems([]);
-    }
-  }, [searchQuery]);
+  const Search_URL = "https://akm0505.bsite.net/api/GetProductSearch/aas";
+  const [item, setItem] = useState([]);
 
   useEffect(() => {
     const loadItemCounts = async () => {
@@ -238,42 +29,58 @@ function SearchItems({ navigation, route }) {
       }
     };
 
+    fetch(Search_URL)
+      .then((res) => res.json())
+      .then((resjson) => {
+        const r = resjson.Table;
+        setItem(r);
+      })
+      .catch(error => { console.log("error caught", error) });
+
     loadItemCounts();
   }, []);
+
+  useEffect(() => {
+    if (searchQuery) {
+      const results = item.filter((item) =>
+        item.ProductDescription.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredItems(results);
+    } else {
+      setFilteredItems([]);
+    }
+  }, [searchQuery, item]);
+
   const storeItemInCart = async (item, quantity) => {
     try {
       const cartItem = {
-        productId: item.productId,
+        productId: item.ProductId,
         quantity,
-        name: item.name, 
-        price: item.price,
+        name: item.ProductName,
+        price: item.ProductSellingPrice,
         discount: item.discount,
-        image: item.image,
+        image: item.ProductThumbnail,
       };
-  
+
       const existingCart = await AsyncStorage.getItem("cart");
       let cart = existingCart ? JSON.parse(existingCart) : [];
-  
-      // Find the index of the item in the cart
-      const itemIndex = cart.findIndex(cartItem => cartItem.productId === item.productId);
+
+      const itemIndex = cart.findIndex(cartItem => cartItem.productId === item.ProductId);
       
-      // Update quantity if the item exists in the cart, otherwise add it
       if (itemIndex > -1) {
         cart[itemIndex].quantity = quantity;
       } else {
         cart.push(cartItem);
       }
-  
-      // Save updated cart and item counts to AsyncStorage
+
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
       await AsyncStorage.setItem("itemCounts", JSON.stringify(itemCounts));
-  
+
       console.log("Cart updated:", cart);
     } catch (error) {
       console.error("Error storing item in cart:", error);
     }
   };
-  
 
   const increaseCount = (itemName) => {
     setItemCounts((prevCounts) => ({
@@ -290,63 +97,61 @@ function SearchItems({ navigation, route }) {
   };
 
   const handleAddToCart = (item) => {
-    const quantity = itemCounts[item.name] || 0;
+    const quantity = itemCounts[item.ProductName] || 0;
     if (quantity > 0) {
-      storeItemInCart(item, quantity); // Pass item and quantity
-      setItemCounts((prevCounts) => ({ ...prevCounts, [item.name]: 0 })); // Reset count after adding to cart
+      storeItemInCart(item, quantity);
+      setItemCounts((prevCounts) => ({ ...prevCounts, [item.ProductName]: 0 }));
       alert("Item added to cart!");
     } else {
       alert("Please select at least one item.");
     }
   };
-  
+
   return (
     <View style={styles.container}>
-      <Text style={{fontWeight:"bold", height:40}}>{filteredItems.length} {filteredItems.length > 1 ? "items found" : "item found"}</Text>
+      <Text style={{ fontWeight: "bold", height: 40 }}>
+        {filteredItems.length} {filteredItems.length > 1 ? "items found" : "item found"}
+      </Text>
+
       {filteredItems.length > 0 ? (
-        
- <FlatList
+        <FlatList
           data={filteredItems}
-          keyExtractor={(item) => item.productId}
+          keyExtractor={(item) => item.ProductId}
           renderItem={({ item }) => (
-            <TouchableOpacity
-            onPress={() => navigation.navigate('ProductDetail', {item})}>
-  <Text>{item.name}</Text>
-            
-            <View style={styles.itemContainer}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>₹{item.price}</Text>
-                <View style={styles.itemActions}>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => increaseCount(item.name)}
-                  >
-                    <Text style={styles.buttonText}>+</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.itemCount}>{itemCounts[item.name] || 0}</Text>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => decreaseCount(item.name)}
-                  >
-                    <Text style={styles.buttonText}>-</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => handleAddToCart(item)}
-                  >
-                    <Text style={styles.addButtonText}>Add to Cart</Text>
-                  </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { item })}>
+              <View style={styles.itemContainer}>
+                <Image source={{ uri: item.ProductThumbnail }} style={styles.itemImage} />
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemName}>{item.ProductName}</Text>
+                  <Text style={styles.itemPrice}>₹{item.ProductSellingPrice}</Text>
+                  <View style={styles.itemActions}>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => increaseCount(item.ProductName)}
+                    >
+                      <Text style={styles.buttonText}>+</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.itemCount}>
+                      {itemCounts[item.ProductName] || 0}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={() => decreaseCount(item.ProductName)}
+                    >
+                      <Text style={styles.buttonText}>-</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.addButton}
+                      onPress={() => handleAddToCart(item)}
+                    >
+                      <Text style={styles.addButtonText}>Add to Cart</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
             </TouchableOpacity>
           )}
         />
-
-    
-       
       ) : (
         <Text>No items found.</Text>
       )}
@@ -359,7 +164,7 @@ function SearchItems({ navigation, route }) {
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

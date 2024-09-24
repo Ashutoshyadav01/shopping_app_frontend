@@ -10,7 +10,9 @@ import SignIn from "./SignIn";
 import Otp from "./Otp";
 import SignUpPage from './SignupPage';
 import Cart from './Cart';
-import Coupon from "./Coupon"
+import Coupon from "./Coupon";
+import OtpSignin from './OtpSignin';
+import Profile from './Profile'
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -28,6 +30,8 @@ const App = () => {
         <Stack.Screen name="SignUp" component={SignUpPage}/>
         <Stack.Screen name="Cart" component={Cart}/>
         <Stack.Screen name="Coupon" component={Coupon}/>
+        <Stack.Screen name="OtpSignin" component={OtpSignin}/>
+        <Stack.Screen name="Profile" component={Profile}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
