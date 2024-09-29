@@ -34,10 +34,13 @@ function OtpSignin({ route, navigation }) {
 
         if (json.Table[0].RESPONSE_TYPE === "SUCCESS") {
           const userJson = json.Table1[0];
+          const addressList= json.Table2;
+          console.log("Address",addressList);
           console.log("user details",userJson);
 
           try {
             await AsyncStorage.setItem("UserProfile", JSON.stringify(userJson)); 
+            await AsyncStorage.setItem("AddressList",JSON.stringify(addressList));
             console.log("Stored user details");
           } catch (error) {
             console.log("Error storing name:", error);

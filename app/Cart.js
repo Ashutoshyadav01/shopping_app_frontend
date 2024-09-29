@@ -14,10 +14,12 @@ const Cart = ({ navigation }) => {
     const loadCartItems = async () => {
       try {
         const cartData = await AsyncStorage.getItem("cart");
+        console.log("Loaded cart data:", cartData); // Debugging
         if (cartData) {
           const parsedCartData = JSON.parse(cartData);
           const validItems = parsedCartData.filter(item => item !== null && item !== undefined);
           setCartItems(validItems);
+          console.log("Parsed cart items:", validItems); // Debugging
 
           const itemCountsData = await AsyncStorage.getItem("itemCounts");
           if (itemCountsData) {
@@ -32,8 +34,8 @@ const Cart = ({ navigation }) => {
     loadCartItems();
   }, []);
 
-  const updateItemCount = async (itemName, newCount) => {
-    const updatedCounts = { ...itemCounts, [itemName]: newCount };
+  const updateItemCount = async (productId, newCount) => {
+    const updatedCounts = { ...itemCounts, [productId]: newCount };
     setItemCounts(updatedCounts);
 
     try {
@@ -47,7 +49,7 @@ const Cart = ({ navigation }) => {
     const updatedItems = cartItems.map(item => {
       if (item.productId === productId) {
         const newQuantity = Math.max(item.quantity + increment, 0);
-        updateItemCount(item.productId, newQuantity);
+        updateItemCount(productId, newQuantity);
         return { ...item, quantity: newQuantity };
       }
       return item;
@@ -71,7 +73,7 @@ const Cart = ({ navigation }) => {
     if (couponCode === "DISCOUNT10") {
       setDiscount(10);
     } else {
-      setDiscount(0); // No discount for invalid coupon
+      setDiscount(0); 
     }
   };
 
@@ -83,7 +85,7 @@ const Cart = ({ navigation }) => {
   if (cartItems.length === 0) {
     return (
       <View style={styles.container}>
-        <Image style={{ width: 300, height: 400 }} source={require("./EmptyCart.png")} />
+        <Image width={400} source={require("./EmptyCart.png")} />
         <Text style={styles.emptyText}>Your cart is empty</Text>
       </View>
     );
@@ -95,7 +97,7 @@ const Cart = ({ navigation }) => {
       <Text style={styles.itemCount}>Total items in cart: {cartItems.length}</Text>
       <FlatList
         data={cartItems}
-        keyExtractor={(item) => item.productId}
+        keyExtractor={(item) => item.productId.toString()} // Convert productId to string
         renderItem={({ item }) => (
           <View style={styles.cartItem}>
             {item.image ? <Image source={{ uri: item.image }} style={styles.itemImage} /> : null}
@@ -183,6 +185,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f9f9f9",
+    justifyContent: "center",
+    alignItems: 'center'
   },
   btn: {
     flexDirection: "row",
@@ -230,12 +234,12 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 80,
     height: 80,
-    resizeMode: "cover",
-    borderRadius: 8,
     marginRight: 15,
+    borderRadius: 10,
   },
   itemDetails: {
     flex: 1,
+    flexDirection: "column",
   },
   itemName: {
     fontSize: 18,
@@ -244,48 +248,65 @@ const styles = StyleSheet.create({
   },
   itemPrice: {
     fontSize: 16,
-    color: "#333",
+    color: "#888",
     marginTop: 5,
   },
   controlsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    flex: 1,
   },
   counterContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "green",
-    borderRadius: 10,
-    justifyContent: "space-between",
-    width: 100,
-  },
-  counterButtonminus: {
-    borderRightWidth: 1,
-    padding: 10,
-    borderRadius: 4,
   },
   counterButton: {
-    borderLeftWidth: 1,
-    padding: 10,
-    borderRadius: 4,
+    backgroundColor: "#ddd",
+    borderRadius: 5,
+    padding: 5,
+    marginHorizontal: 10,
+  },
+  counterButtonminus: {
+    backgroundColor: "#ddd",
+    borderRadius: 5,
+    padding: 5,
+    marginHorizontal: 10,
   },
   counterText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
-    color: "green"
   },
   trashIconContainer: {
-    marginLeft: 11,
+    paddingHorizontal: 10,
+  },
+  couponContainer: {
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 10,
+  },
+  couponInput: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    flex: 1,
+  },
+  applyCouponButton: {
+    backgroundColor: "#FF6600",
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  applyCouponText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
   bill: {
+    width: "100%",
     backgroundColor: "#fff",
-    borderRadius: 8,
     padding: 15,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -294,11 +315,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   buyNowButton: {
-    backgroundColor: "#4CAF50",
-    padding: 15,
+    backgroundColor: "#FF6600",
+    padding: 10,
     borderRadius: 5,
-    flex: 1,
-    marginLeft: 10,
+    marginTop: 20,
   },
   buyNowText: {
     color: "#fff",
@@ -306,40 +326,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   PickupButton: {
-    backgroundColor: "#2196F3",
-    padding: 15,
+    backgroundColor: "#FF6600",
+    padding: 10,
     borderRadius: 5,
-    flex: 1,
+    marginTop: 20,
   },
   PickText: {
     color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
-  },
-  couponContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  couponInput: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 10,
-  },
-  applyCouponButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  applyCouponText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 });
 

@@ -74,7 +74,7 @@ const SearchItems = ({ navigation, route }) => {
       }
 
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
-      await AsyncStorage.setItem("itemCounts", JSON.stringify(itemCounts));
+      await AsyncStorage.setItem("itemCounts", JSON.stringify(itemCounts)); // Save itemCounts back to AsyncStorage
 
       console.log("Cart updated:", cart);
     } catch (error) {
@@ -96,10 +96,11 @@ const SearchItems = ({ navigation, route }) => {
     }));
   };
 
-  const handleAddToCart = (item) => {
+  const handleAddToCart = async (item) => {
     const quantity = itemCounts[item.ProductName] || 0;
     if (quantity > 0) {
-      storeItemInCart(item, quantity);
+      await storeItemInCart(item, quantity);
+      // Set the item count back to 0 (Optional)
       setItemCounts((prevCounts) => ({ ...prevCounts, [item.ProductName]: 0 }));
       alert("Item added to cart!");
     } else {
@@ -116,7 +117,7 @@ const SearchItems = ({ navigation, route }) => {
       {filteredItems.length > 0 ? (
         <FlatList
           data={filteredItems}
-          keyExtractor={(item) => item.ProductId}
+          keyExtractor={(item) => item.ProductId.toString()} // Convert ProductId to string
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { item })}>
               <View style={styles.itemContainer}>

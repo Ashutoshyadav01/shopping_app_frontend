@@ -5,7 +5,7 @@ import{View,Text,StyleSheet,} from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from "react-native-vector-icons/Ionicons"
 
-const Profile = () => {
+const Profile = ({navigation}) => {
      const [name,setName]=useState("");
      const [number,setNumber]=useState("")
 
@@ -31,6 +31,7 @@ const Profile = () => {
         try {
             await AsyncStorage.removeItem("UserProfile");
             console.log("Profile cleared from AsyncStorage");
+            navigation.navigate("Home")
         } catch (error) {
             console.error("Error clearing the profile:", error);
         }
@@ -54,9 +55,15 @@ const Profile = () => {
     </View>
     
    </View>
+   <TouchableOpacity onPress={()=>{
+    navigation.navigate("Address")
+   }}>
    <View style={styles.options}>
         <Text>Manage Address</Text>
     </View>
+
+   </TouchableOpacity>
+   
     <View style={styles.options}>
         <Text>My Wallet</Text>
     </View>
@@ -67,17 +74,19 @@ const Profile = () => {
         <Text>Share Store with Friends</Text>
     </View>
     
+
+
+
     <TouchableOpacity onPress={()=>{
         handleSignOut();
     }}>
-    <View style={styles.options}>
-        <Text style={{color:"red"}}>Sign Out</Text>
+    <View style={styles.signOut}>
+        <Text style={{color:"#fff"}}>Sign Out</Text>
     </View>
     </TouchableOpacity>
-    
-   
-   
    </View>
+
+   
   )
 }
 const styles= StyleSheet.create({
@@ -90,6 +99,17 @@ details:{
     margin:30,
     alignItems:"center"
     
+},
+
+
+signOut:{
+backgroundColor:"#f6740c",
+justifyContent:"center",
+alignItems:"center",
+width:400,
+padding:15,
+marginLeft:6,
+marginTop:370
 },
 options: {
     paddingVertical: 15,
