@@ -63,6 +63,7 @@ function Otp({ route, navigation }) {
           if(json.RESPONSE_TYPE=="SUCCESS")
           {
             alert(json.RESPONSE_MESSAGE);
+            AsyncStorage.setItem()
             navigation.navigate("Signin");
 
           }
