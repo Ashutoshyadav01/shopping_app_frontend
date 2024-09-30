@@ -9,7 +9,7 @@ import { useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 function OtpSignin({ route, navigation }) {
-  const { otp, input, name } = route.params; // Retrieve the OTP from the previous screen
+  const { otp, input, name } = route.params; 
   const [enteredOtp, setEnteredOtp] = useState("");
   const [count, setCount] = useState(1);
 

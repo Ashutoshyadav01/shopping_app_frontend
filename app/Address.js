@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useFocusEffect } from "@react-navigation/native";
 const Address = ({navigation}) => {
   const [name, setname] = useState("");
   const [number, setNumber] = useState("");
@@ -18,18 +19,63 @@ const Address = ({navigation}) => {
   }
 
  const [allAddress,setAllAddress]=useState([]);
- useEffect(()=>{
-    const AddressList= async()=>{
-        const addresses= await AsyncStorage.getItem("AddressList");
-       jsonAddress= JSON.parse(addresses);
-     console.log("addresses",  jsonAddress);
-     setAllAddress(jsonAddress);
-    
+ async function RefreshAddressList()
+ {
+   const profile= await AsyncStorage.getItem("UserProfile")
+   const parsed=JSON.parse(profile);
+   const loginId=parsed.CustomerMobileNumber;
+   const response = await fetch("https://akm0505.bsite.net/api/GetCustomerLoginDetail", {
+     method: "POST",
+     body: JSON.stringify({
+       "CUSTOMER_LOGIN_ID": loginId,
+       "CUSTOMER_PASSWORD": "sample string 9",
+       "CUSTOMER_ROLE_ID": 0,
+       "SHOP_ID": 1,
+       "OAUTH_TOKEN": "sample string 5"
+     }),
+     headers: {
+       "Content-type": "application/json; charset=UTF-8",
+     },
+   });
+   
+   const json = await response.json();
+
+   if (json.Table[0].RESPONSE_TYPE === "SUCCESS") {
+     const addressList= json.Table2;
+     console.log("Refreshed Address",addressList);
+    setAllAddress(addressList);
+     try {
      
-    }
-    AddressList();
-  
- },[])
+       await AsyncStorage.setItem("AddressList",JSON.stringify(addressList));
+      
+     } catch (error) {
+       console.log("Error in fetching address detail", error);
+     }
+
+   
+   
+   } 
+ 
+} 
+
+//alert("testing 456")
+useFocusEffect(
+  React.useCallback(() => {
+   //alert("testing 789");
+    const AddressList= async()=>{
+      const addresses= await AsyncStorage.getItem("AddressList");
+      //alert("testing 123");
+     jsonAddress= JSON.parse(addresses);
+   console.log("update addresses",  jsonAddress);
+   setAllAddress(jsonAddress);
+
+   
+  }
+  AddressList();
+  }, [])
+);
+
+
  if(allAddress.length!=0)
  {
   return (
@@ -42,6 +88,7 @@ const Address = ({navigation}) => {
             <Text style={{fontSize:15, fontWeight:"600"}}>{item.CustomerName}</Text>
             <Text style={{fontSize:12, fontWeight:"300",marginTop:10}}>{item.CustomerPhoneNumber}</Text>
             <Text>{item.Address}, {item.City}, {item.State}-{item.PinCode}</Text>
+            <Text>{(item.IsDefault==true)?"default address":"not a default address"}</Text>
            <View style={{flexDirection:"row",gap:80,marginTop:10}}>
 
 
@@ -98,7 +145,8 @@ fetch("https://akm0505.bsite.net/api/CustomerAddressDelete", {
 .then((json) => {
   console.log("DELETED VALUE", json);
   if (json.RESPONSE_TYPE == "SUCCESS") {
-    navigation.navigate("Home");
+    RefreshAddressList();
+    // navigation.navigate("Home");
   }
   alert(json.RESPONSE_MESSAGE);
 })

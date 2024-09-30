@@ -100,7 +100,6 @@ const SearchItems = ({ navigation, route }) => {
     const quantity = itemCounts[item.ProductName] || 0;
     if (quantity > 0) {
       await storeItemInCart(item, quantity);
-      // Set the item count back to 0 (Optional)
       setItemCounts((prevCounts) => ({ ...prevCounts, [item.ProductName]: 0 }));
       alert("Item added to cart!");
     } else {

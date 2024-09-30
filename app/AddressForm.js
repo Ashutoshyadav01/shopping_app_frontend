@@ -14,7 +14,48 @@ export default function AddressForm({ navigation,route }) {
   const [cus_ID, setCus_Id] = useState("");
   const [state, setState] = useState(p_state?p_state:"");
   const [defaultAddress, setDefaultAddress] = useState(p_default?p_default:true);
+  async function RefreshAddressList()
+  {
+    const profile= await AsyncStorage.getItem("UserProfile")
+    const parsed=JSON.parse(profile);
+    const loginId=parsed.CustomerMobileNumber;
+    const response = fetch("https://akm0505.bsite.net/api/GetCustomerLoginDetail", {
+      method: "POST",
+      body: JSON.stringify({
+        "CUSTOMER_LOGIN_ID": loginId,
+        "CUSTOMER_PASSWORD": "sample string 9",
+        "CUSTOMER_ROLE_ID": 0,
+        "SHOP_ID": 1,
+        "OAUTH_TOKEN": "sample string 5"
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+    .then((res) => res.json())
+    .then((resJson) => {
+    // console.log("JSON PARSE 1", resJson)
+    if (resJson.Table[0].RESPONSE_TYPE === "SUCCESS") {
+      const addressList= resJson.Table2;
+     // console.log("Address",addressList);
+
+      try {
+       AsyncStorage.setItem("AddressList",JSON.stringify(addressList));
+        navigation.navigate("Address");
+      } catch (error) {
+        console.log("Error in fetching address detail", error);
+      }
+
+    
+    
+    }
+     
+    })
+    
+  
  
+  
+} 
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -68,7 +109,8 @@ export default function AddressForm({ navigation,route }) {
       .then((json) => {
         console.log("response recived", json);
         if (json.RESPONSE_TYPE == "SUCCESS") {
-          navigation.navigate("Address");
+          RefreshAddressList();
+         
         }
         alert(json.RESPONSE_MESSAGE);
       })

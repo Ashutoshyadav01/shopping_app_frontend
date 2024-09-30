@@ -2,13 +2,17 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { RadioButton } from "react-native-paper";
 
 const Cart = ({ navigation }) => {
   const [cartItems, setCartItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const[shopAdd,setShopAdd]= useState("");
   const freeAmt = 250;
+  const [checked, setChecked] = useState('first');
+  const items=cartItems.length;
 
   useEffect(() => {
     const loadCartItems = async () => {
@@ -76,11 +80,17 @@ const Cart = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>My Cart</Text>
+      <Text style={styles.heading}>Review Order</Text>
       {cartItems.length === 0 ? (
         <Text>Your cart is empty</Text>
       ) : (
         <>
+           <TextInput
+              style={styles.couponInput}
+              placeholder="SHOP ADDRESS"
+              value=""
+              onChangeText=""
+            />
           <FlatList
             data={cartItems}
             keyExtractor={(item) => item.productId.toString()}
@@ -105,50 +115,25 @@ const Cart = ({ navigation }) => {
               </View>
             )}
           />
-          <View style={styles.couponSection}>
-            <TextInput
-              style={styles.couponInput}
-              placeholder="Enter coupon code"
-              value={couponCode}
-              onChangeText={setCouponCode}
-            />
-            <TouchableOpacity style={styles.applyCouponButton} onPress={applyCoupon}>
-              <Text style={styles.applyCouponText}>Apply Coupon</Text>
-            </TouchableOpacity>
-          </View>
+        
           <View style={styles.bill}>
-        <Text style={{fontWeight:"600"}}>Bill Details</Text>
-        <View style={styles.total}>
-          <Text>Sub Total</Text>
-          <Text style={{ fontWeight: "500" }}>₹{calculateTotalPrice()}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Tax</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() ? "₹19" : "Free delivery"}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Delivery Charge</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Payable</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
-        </View>
-      </View>
-         <View style={styles.BtnView}>
 
-         <TouchableOpacity onPress={()=>{
-          navigation.navigate("ReviewOrder")
-         }}>
-         <Text style={styles.btn}>PICKUP</Text>
-            </TouchableOpacity>
-          
-          
-         <TouchableOpacity>
-         <Text style={styles.btn}>DELIVER</Text>
-            </TouchableOpacity>
-         
-         </View>
+          <Text>Total Payable Amount ({items}  {(items>1)? "items" :"item" }) :</Text>
+          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
+       
+      </View>
+      <View style={{flexDirection:"row", alignItems:"center",marginTop:10, }}>
+        <RadioButton
+          value="first"
+          status={checked === 'first' ? 'checked' : 'unchecked'}
+          onPress={() => setChecked('first')}
+        />
+        <Text>Cash on Delivery</Text>
+      </View>
+      <View style={{alignItems: 'center', padding: 10, backgroundColor: "#f6740c", margin:20}}>
+        <Text style={{color:"#fff"}}>BUY NOW</Text>
+        
+      </View>
         
         </>
       )}
@@ -197,6 +182,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     marginTop: 20,
+    flexDirection:"row",
+    gap:20
   },
   cartItem: {
     flexDirection: "row",
@@ -241,11 +228,11 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   couponInput: {
-    flex: 1,
     borderColor: "#ddd",
     borderWidth: 1,
     padding: 8,
     borderRadius: 4,
+    margin:10
   },
   applyCouponButton: {
     backgroundColor: "#4CAF50",
