@@ -19,6 +19,7 @@ const Address = ({navigation}) => {
   }
 
  const [allAddress,setAllAddress]=useState([]);
+
  async function RefreshAddressList()
  {
    const profile= await AsyncStorage.getItem("UserProfile")
@@ -74,12 +75,46 @@ useFocusEffect(
   AddressList();
   }, [])
 );
+useEffect(() => {
+  async function defaultAdd() {
+    const defaultAddress = allAddress.filter((item) => item.IsDefault);
+    console.log("default", defaultAddress);
+
+    // Check if a default address exists
+    if (defaultAddress.length > 0) {
+      const defaultAddressLine1 = defaultAddress[0].Address;
+      const defaultAddressLine2 = defaultAddress[0].City;
+      const defaultAddressLine3 = defaultAddress[0].State;
+
+      const addressObject = {
+        Address: defaultAddressLine1,
+        City: defaultAddressLine2,
+        State: defaultAddressLine3
+      };
+
+      await AsyncStorage.setItem("defaultAddress", JSON.stringify(addressObject));
+      
+      const x = await AsyncStorage.getItem("defaultAddress");
+      const parsed = JSON.parse(x);
+
+
+      console.log("parsed item", parsed); 
+      console.log("parsed address", parsed.Address); 
+    } else {
+      console.log("No default address found.");
+    }
+  }
+  defaultAdd();
+}, [allAddress]);
 
 
  if(allAddress.length!=0)
  {
   return (
     <View style={{flex: 1, backgroundColor:"#fff"}}>
+      {console.log("123")}
+   
+ 
       <FlatList
         data={allAddress}
         keyExtractor={(item) => item.AddressId}

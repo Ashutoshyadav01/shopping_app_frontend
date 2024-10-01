@@ -9,7 +9,8 @@ const Cart = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const freeAmt = 250;
-
+//  const btn1=1;
+//  const btn2=2;
   useEffect(() => {
     const loadCartItems = async () => {
       try {
@@ -138,13 +139,17 @@ const Cart = ({ navigation }) => {
          <View style={styles.BtnView}>
 
          <TouchableOpacity onPress={()=>{
-          navigation.navigate("ReviewOrder")
+          navigation.navigate("ReviewOrder",{btn1})
          }}>
          <Text style={styles.btn}>PICKUP</Text>
             </TouchableOpacity>
           
           
-         <TouchableOpacity>
+         <TouchableOpacity
+         onPress={()=>{
+          navigation.navigate("ReviewOrder",{btn2})
+         }}
+         >
          <Text style={styles.btn}>DELIVER</Text>
             </TouchableOpacity>
          

@@ -13,7 +13,7 @@ export default function AddressForm({ navigation,route }) {
   const [pinCode, setPinCode] = useState(pin?pin:"");
   const [cus_ID, setCus_Id] = useState("");
   const [state, setState] = useState(p_state?p_state:"");
-  const [defaultAddress, setDefaultAddress] = useState(p_default?p_default:true);
+  const [defaultAddress, setDefaultAddress] = useState(p_default?p_default:false);
   async function RefreshAddressList()
   {
     const profile= await AsyncStorage.getItem("UserProfile")

@@ -101,12 +101,10 @@ const Cart = ({ navigation }) => {
         <Text>Your cart is empty</Text>
       ) : (
         <>
-           <TextInput
-              style={styles.couponInput}
-              placeholder={shopAdd}
-              value=""
-              onChangeText=""
-            />
+         <View style={styles.Addrs}>
+         <Text style={{flex:1, fontWeight:"500", margin:10}}>{shopAdd}</Text>
+         </View>
+         
           <FlatList
             data={cartItems}
             keyExtractor={(item) => item.productId.toString()}
@@ -158,6 +156,13 @@ const Cart = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  Addrs:{
+  borderWidth:1,
+  height:50,
+  borderColor:"grey",
+  borderRadius:20,
+  marginBottom:10
+  },
   container: {
     flex: 1,
     padding: 16,
