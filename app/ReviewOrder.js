@@ -32,9 +32,24 @@ const Cart = ({ navigation }) => {
         console.error("Error loading cart items:", error);
       }
     };
+    async function getInitialSetup()
+    {
+     
+      const initial= await AsyncStorage.getItem("initialSetup");
+      const parsed=JSON.parse(initial);
+     // console.log(parsed);
+      const AddressLine1=parsed.Table[0].ShopAddressLine1;
+      const AddressLine2= parsed.Table[0].ShopAddressLine2; 
+      setShopAdd(`${AddressLine1}, ${AddressLine2}`)
+    }
 
+  getInitialSetup();
     loadCartItems();
   }, []);
+
+//   useEffect(()=>{
+// console.log("shop Address Chnaged", shopAdd)
+//   },[shopAdd])
 
   const calculateTotal = () => {
     let total = 0;
@@ -80,6 +95,7 @@ const Cart = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      
       <Text style={styles.heading}>Review Order</Text>
       {cartItems.length === 0 ? (
         <Text>Your cart is empty</Text>
@@ -87,7 +103,7 @@ const Cart = ({ navigation }) => {
         <>
            <TextInput
               style={styles.couponInput}
-              placeholder="SHOP ADDRESS"
+              placeholder={shopAdd}
               value=""
               onChangeText=""
             />

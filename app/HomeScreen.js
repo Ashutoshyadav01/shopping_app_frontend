@@ -62,6 +62,10 @@ const HomeScreen = ({ navigation }) => {
     fetch(API_URL)
       .then((res) => res.json())
       .then((resJson) => {
+         AsyncStorage.setItem("initialSetup",JSON.stringify(resJson));
+         
+       
+
         if (resJson.Table && resJson.Table.length > 0) {
           setShopNM(resJson.Table[0].SHOP_NAME);
           setLogo(resJson.Table[0].LOGO_IMAGE_URL);
