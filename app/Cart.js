@@ -139,7 +139,7 @@ const Cart = ({ navigation }) => {
          <View style={styles.BtnView}>
 
          <TouchableOpacity onPress={()=>{
-          navigation.navigate("ReviewOrder",{btn1})
+          navigation.navigate("ReviewOrder")
          }}>
          <Text style={styles.btn}>PICKUP</Text>
             </TouchableOpacity>
@@ -147,7 +147,7 @@ const Cart = ({ navigation }) => {
           
          <TouchableOpacity
          onPress={()=>{
-          navigation.navigate("ReviewOrder",{btn2})
+          navigation.navigate("ReviewOrder")
          }}
          >
          <Text style={styles.btn}>DELIVER</Text>

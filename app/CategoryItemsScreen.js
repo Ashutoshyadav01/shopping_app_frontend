@@ -218,7 +218,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
 // Style definitions
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+   
     backgroundColor: "#fff",
 
   },
@@ -234,7 +234,8 @@ const styles = StyleSheet.create({
   },
   itemList: {
     paddingTop: 0,
-    marginTop:10
+    marginTop:0,
+    padding:10
   },
   itemContainer: {
     flexDirection: "row",
