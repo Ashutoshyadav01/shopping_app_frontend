@@ -109,8 +109,17 @@ const Cart = ({ navigation }) => {
                       onPress={() => item.quantity > 1 ? updateItemCount(item, item.quantity - 1) : removeFromCart(item)}
                     >
                       <Icon name="minus-circle" size={24} color="red" />
+                    
                     </TouchableOpacity>
                   </View>
+                </View>
+                <View style={styles.trash}>
+                  <TouchableOpacity onPress={()=>{
+                     removeFromCart(item); 
+                  }}>
+                  <Icon name="trash" size={24} color="grey" />
+                  </TouchableOpacity>
+                
                 </View>
               </View>
             )}
@@ -230,6 +239,10 @@ const styles = StyleSheet.create({
   cartItemPrice: {
     fontSize: 16,
     color: "#555",
+  },
+  trash:{
+  justifyContent:"center",
+  paddingRight:10
   },
   quantityActions: {
     flexDirection: "row",
