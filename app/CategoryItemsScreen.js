@@ -20,23 +20,16 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   const [Count, setCount] = useState(0);
   const [sub_cat, setSub_cat] = useState([]);
 
-  // Initializing items and AsyncStorage data on component mount
   useEffect(() => {
     if (category) {
       fetch(API_PRODUCT_LIST + category.CategoryId)
         .then((item) => item.json())
         .then((res) => {
-          console.log("Full API response:", res);
-          console.log("Product list", res.Table);
-          console.log("Category details", res.Table1);
           setFilteredItems(res.Table);
           setAllItems(res.Table);
           setCount(res.Table.length);
           if (res.Table1) {
-            console.log("Category details found:", res.Table1);
             setSub_cat(res.Table1);
-          } else {
-            console.log("No category details found.");
           }
         });
     }
@@ -55,9 +48,8 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     loadItemCounts();
   }, [category]);
 
-  // Handling filter by subcategory name
   function handleFilter(id) {
-    const filtered = allItems.filter((item)=>item.SubCategoryId===id);
+    const filtered = allItems.filter((item) => item.SubCategoryId === id);
     setFilteredItems(filtered);
     setCount(filtered.length);
   }
@@ -67,7 +59,6 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     setCount(allItems.length);
   }
 
-  // Storing items in cart
   const storeItemInCart = async (productId, quantity, itemDetails) => {
     if (quantity <= 0) {
       console.warn("Cannot add items with zero quantity to the cart.");
@@ -92,7 +83,6 @@ const CategoryItemsScreen = ({ route, navigation }) => {
     }
   };
 
-  // Function to update item count and store it in AsyncStorage
   const updateItemCount = async (itemName, newCount) => {
     const updatedCounts = { ...itemCounts, [itemName]: newCount };
     setItemCounts(updatedCounts);
@@ -109,33 +99,37 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       <Text style={styles.title}>{category.name}</Text>
 
       <FlatList
-  data={[{ id: "0", name: "All" }, ...sub_cat]}
-  horizontal={true}
-  style={styles.buttons}
-  contentContainerStyle={{ paddingHorizontal: 10 }} // Add padding if needed
-  showsHorizontalScrollIndicator={false} // To hide the scrollbar for better UI
-  keyExtractor={(item) => (item.id ? item.id.toString() : Math.random().toString())}
-  renderItem={({ item }) => (
-    <TouchableOpacity
-      style={styles.subcategoryButton}
-      onPress={() =>
-        item.id === "0" ? showAllItems() : handleFilter(item.SubCategoryId)
-      }
-    >
-      <Text style={styles.subcategoryButtonText}>
-        {item.name || item.CategoryName}
-      </Text>
-    </TouchableOpacity>
-  )}
-/>
+        data={[{ id: "0", name: "All" }, ...sub_cat]}
+        horizontal={true}
+        style={styles.buttons}
+        contentContainerStyle={{ paddingHorizontal: 10 }}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) =>
+          item.id ? item.id.toString() : Math.random().toString()
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.subcategoryButton}
+            onPress={() =>
+              item.id === "0"
+                ? showAllItems()
+                : handleFilter(item.SubCategoryId)
+            }
+          >
+            <Text style={styles.subcategoryButtonText}>
+              {item.name || item.CategoryName}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
 
-      <Text style={{marginLeft:15,fontWeight:"bold"}}>
-        {Count} {Count > 1 ? "Items in the list" : "Item in the list "}
+      <Text style={{ marginLeft: 15, fontWeight: "bold" }}>
+        {Count} {Count > 1 ? "Items in the list" : "Item in the list"}
       </Text>
 
       <FlatList
         data={filteredItems}
-        keyExtractor={(item, index) => index.toString()} // Fixed toString issue
+        keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={styles.itemList}
         renderItem={({ item }) => {
           const itemCount = itemCounts[item.ProductName] || 0;
@@ -161,6 +155,13 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                     onPress={() => {
                       const newCount = itemCount + 1;
                       updateItemCount(item.ProductName, newCount);
+
+                      storeItemInCart(item.ProductId, newCount, {
+                        name: item.ProductName,
+                        price: item.ProductSellingPrice,
+                        discount: item.discount,
+                        image: item.ProductThumbnail,
+                      });
                     }}
                   >
                     <Icon
@@ -186,8 +187,9 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
-                      if (item.productId) {
-                        storeItemInCart(item.productId, itemCount, {
+                      if (item.ProductId) {
+                        // Ensure the correct key name is used
+                        storeItemInCart(item.ProductId, itemCount, {
                           name: item.ProductName,
                           price: item.ProductSellingPrice,
                           discount: item.discount,
@@ -215,12 +217,9 @@ const CategoryItemsScreen = ({ route, navigation }) => {
   );
 };
 
-// Style definitions
 const styles = StyleSheet.create({
   container: {
-   
     backgroundColor: "#fff",
-
   },
   title: {
     fontSize: 24,
@@ -230,12 +229,12 @@ const styles = StyleSheet.create({
   buttons: {
     marginBottom: 10,
     display: "flex",
-    height:40
+    height: 40,
   },
   itemList: {
     paddingTop: 0,
-    marginTop:0,
-    padding:10
+    marginTop: 0,
+    padding: 10,
   },
   itemContainer: {
     flexDirection: "row",
@@ -276,28 +275,26 @@ const styles = StyleSheet.create({
   },
   iconCart: {
     marginLeft: 10,
-    marginRight:20
+    marginRight: 20,
   },
   subcategoryButton: {
-    flex:1,
-    paddingTop:0,
-    marginRight: 10,           // Separate buttons horizontally
-  paddingVertical: 2,        // Adjust padding to give space for text height
-  paddingHorizontal: 12,     // Horizontal padding for more space for text
-  borderRadius: 8,
-  backgroundColor: 'grey',
-  minWidth: 20,              // Ensures the button has a minimum width
-  justifyContent: 'center',  // Centers the text vertically
-  alignItems: 'center',  
-  height:30,    
-  marginBottom:12
+    flex: 1,
+    paddingTop: 0,
+    marginRight: 10,
+    paddingVertical: 2,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "grey",
+    minWidth: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 30,
+    marginBottom: 12,
   },
-
-  
   subcategoryButtonText: {
-    color: 'white',
-  fontSize: 16,
-  textAlign: 'center', 
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

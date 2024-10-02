@@ -9,36 +9,45 @@ const Cart = ({ navigation }) => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const freeAmt = 250;
-//  const btn1=1;
-//  const btn2=2;
-  useEffect(() => {
-    const loadCartItems = async () => {
-      try {
-        const cartData = await AsyncStorage.getItem("cart");
-        if (cartData) {
-          const parsedCartData = JSON.parse(cartData);
-          const validItems = parsedCartData.filter(item => item !== null && item !== undefined);
-          setCartItems(validItems);
-        }
+  const btn1 = 1;
+  const btn2 = 2;
 
-        const storedCounts = await AsyncStorage.getItem("itemCounts");
-        if (storedCounts) {
-          setItemCounts(JSON.parse(storedCounts));
-        }
-      } catch (error) {
-        console.error("Error loading cart items:", error);
+  // Function to load cart data
+  const loadCartItems = async () => {
+    try {
+      const cartData = await AsyncStorage.getItem("cart");
+      if (cartData) {
+        const parsedCartData = JSON.parse(cartData);
+        const validItems = parsedCartData.filter(item => item !== null && item !== undefined);
+        setCartItems(validItems);
       }
-    };
 
+      const storedCounts = await AsyncStorage.getItem("itemCounts");
+      if (storedCounts) {
+        setItemCounts(JSON.parse(storedCounts));
+      }
+    } catch (error) {
+      console.error("Error loading cart items:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Load cart items when the component mounts
     loadCartItems();
-  }, []);
 
-  const calculateTotal = () => {
-    let total = 0;
-    cartItems.forEach((item) => {
-      total += item.price * item.quantity;
+    // Add listener to reload cart items when the screen is focused
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadCartItems(); // Reload data when the screen is focused
     });
-    return total;
+
+    // Clean up the event listener on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  const calculateTotalPrice = () => {
+    return cartItems.reduce((acc, curr) => {
+      return acc + curr.quantity * curr.price;
+    }, 0);
   };
 
   const applyCoupon = () => {
@@ -49,21 +58,21 @@ const Cart = ({ navigation }) => {
       alert("Invalid coupon code.");
     }
   };
-  function calculateTotalPrice() {
-    return cartItems.reduce((acc, curr) => {
-      return acc + curr.quantity * curr.price;
-    }, 0);
-  }
 
-
+  // Function to update cart item count and save it to AsyncStorage
   const updateItemCount = async (item, newQuantity) => {
-    setCartItems((prevItems) =>
-      prevItems.map((cartItem) =>
-        cartItem.productId === item.productId
-          ? { ...cartItem, quantity: newQuantity }
-          : cartItem
-      )
+    const updatedCartItems = cartItems.map((cartItem) =>
+      cartItem.productId === item.productId
+        ? { ...cartItem, quantity: newQuantity }
+        : cartItem
     );
+
+    setCartItems(updatedCartItems);
+
+    // Update and save the cart items in AsyncStorage
+    await AsyncStorage.setItem("cart", JSON.stringify(updatedCartItems));
+
+    // Update and save item counts in AsyncStorage
     const updatedCounts = { ...itemCounts, [item.name]: newQuantity };
     setItemCounts(updatedCounts);
     await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
@@ -106,6 +115,7 @@ const Cart = ({ navigation }) => {
               </View>
             )}
           />
+          {/* Coupon and Bill sections */}
           <View style={styles.couponSection}>
             <TextInput
               style={styles.couponInput}
@@ -118,43 +128,33 @@ const Cart = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.bill}>
-        <Text style={{fontWeight:"600"}}>Bill Details</Text>
-        <View style={styles.total}>
-          <Text>Sub Total</Text>
-          <Text style={{ fontWeight: "500" }}>₹{calculateTotalPrice()}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Tax</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() ? "₹19" : "Free delivery"}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Delivery Charge</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
-        </View>
-        <View style={styles.total}>
-          <Text>Payable</Text>
-          <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
-        </View>
-      </View>
-         <View style={styles.BtnView}>
-
-         <TouchableOpacity onPress={()=>{
-          navigation.navigate("ReviewOrder")
-         }}>
-         <Text style={styles.btn}>PICKUP</Text>
+            <Text style={{fontWeight:"600"}}>Bill Details</Text>
+            <View style={styles.total}>
+              <Text>Sub Total</Text>
+              <Text style={{ fontWeight: "500" }}>₹{calculateTotalPrice()}</Text>
+            </View>
+            <View style={styles.total}>
+              <Text>Tax</Text>
+              <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() ? "₹19" : "Free delivery"}</Text>
+            </View>
+            <View style={styles.total}>
+              <Text>Delivery Charge</Text>
+              <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
+            </View>
+            <View style={styles.total}>
+              <Text>Payable</Text>
+              <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
+            </View>
+          </View>
+          {/* Pickup and Deliver Buttons */}
+          <View style={styles.BtnView}>
+            <TouchableOpacity onPress={() => navigation.navigate("ReviewOrder", {deliveryType: btn1})}>
+              <Text style={styles.btn}>PICKUP</Text>
             </TouchableOpacity>
-          
-          
-         <TouchableOpacity
-         onPress={()=>{
-          navigation.navigate("ReviewOrder")
-         }}
-         >
-         <Text style={styles.btn}>DELIVER</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("ReviewOrder", {deliveryType: btn2})}>
+              <Text style={styles.btn}>DELIVER</Text>
             </TouchableOpacity>
-         
-         </View>
-        
+          </View>
         </>
       )}
     </View>
@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderBottomWidth: 1,
     padding: 10,
-    
   },
   bill: {
     backgroundColor: "#fff",
@@ -262,33 +261,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  totalAmount: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 16,
-  },
-  freeAmount: {
-    fontSize: 16,
-    color: "#555",
-    marginTop: 8,
-  },
-  pickupDeliveryText: {
-    fontSize: 18,
-    marginTop: 16,
-    fontWeight: "bold",
-  },
-  checkoutButton: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 16,
-  },
-  checkoutButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    textAlign: "center",
-    fontWeight: "bold",
-  },
 });
 
-export default Cart;
+export default Cart

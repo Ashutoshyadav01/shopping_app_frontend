@@ -3,8 +3,9 @@ import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, TextInput } 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { RadioButton } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native";
 
-const Cart = ({ navigation }) => {
+const Cart = ({ navigation ,route}) => {
   const [cartItems, setCartItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
   const [couponCode, setCouponCode] = useState("");
@@ -13,7 +14,26 @@ const Cart = ({ navigation }) => {
   const freeAmt = 250;
   const [checked, setChecked] = useState('first');
   const items=cartItems.length;
+  const [defaultAddress,setDefaultAddress]=useState("");
+  const {deliveryType}= route.params;
+  useFocusEffect(
+    React.useCallback(() => {
+      async function getDefaultAddress()
+    {
+    const x= await AsyncStorage.getItem("defaultAddress")
+    if(x)
+    {
+      const parsed=JSON.parse(x);
+      const defaultAddressLine1=parsed.Address;
+      const defaultAddressLine2=parsed.City;
+      const defaultAddressLine3=parsed.State;
 
+      setDefaultAddress(`${defaultAddressLine1}, ${defaultAddressLine2}, ${defaultAddressLine3}`);
+    }
+    }
+  getDefaultAddress();
+    }, [])
+  )
   useEffect(() => {
     const loadCartItems = async () => {
       try {
@@ -43,6 +63,7 @@ const Cart = ({ navigation }) => {
       setShopAdd(`${AddressLine1}, ${AddressLine2}`)
     }
 
+    
   getInitialSetup();
     loadCartItems();
   }, []);
@@ -101,8 +122,19 @@ const Cart = ({ navigation }) => {
         <Text>Your cart is empty</Text>
       ) : (
         <>
+        <View style={{flexDirection:"row", gap:150}}>
+        <Text style={{marginLeft:10, marginBottom:5 , color:"#f6740c"}}>{(deliveryType==1)?"SHOP ADDRESS":"Default Address"}</Text>
+       <TouchableOpacity
+       onPress={()=>{
+        navigation.navigate("Address")
+       }}
+       >
+       <Text style={{color:"red"}}> {(deliveryType!=1)?"Change Address":null}</Text>
+        </TouchableOpacity>
+        </View>
+        
          <View style={styles.Addrs}>
-         <Text style={{flex:1, fontWeight:"500", margin:10}}>{shopAdd}</Text>
+         <Text style={{flex:1, fontWeight:"500", margin:10}}>{(deliveryType==1)?shopAdd:defaultAddress}</Text>
          </View>
          
           <FlatList

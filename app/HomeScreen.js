@@ -217,6 +217,11 @@ const styles = StyleSheet.create({
     margin: 20,
     paddingLeft: 10,
   },
+loadingContainer:{
+ flex:1,
+ justifyContent:"center",
+ alignItems:"center"
+  },
   searchIcon: {
     marginRight: 10,
   },
