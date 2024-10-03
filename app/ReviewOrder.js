@@ -4,8 +4,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { RadioButton } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
+import RNPickerSelect from 'react-native-picker-select';
+
 
 const Cart = ({ navigation ,route}) => {
+  const [selectedValue, setSelectedValue] = useState(null);
+
+
   const [cartItems, setCartItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
   const [couponCode, setCouponCode] = useState("");
@@ -17,6 +22,10 @@ const Cart = ({ navigation ,route}) => {
   const [allAddress,setAllAddress]=useState([]);
   const [defaultAddress,setDefaultAddress]=useState("");
   const {deliveryType,addressId}= route.params;
+  const options = [
+    { label: 'Cash On delivery', value: 'COD' },
+    { label: 'UPI', value: 'UPI' },
+  ];
   useFocusEffect(
     React.useCallback(() => {
       const fetchAddresses = async () => {
@@ -204,6 +213,22 @@ const Cart = ({ navigation ,route}) => {
         <Text>Cash on Delivery</Text>
         </View>
         }
+        {
+          deliveryType==2 &&
+          
+            <View style={styles.container}>
+      <Text style={styles.label}>Select an Option:</Text>
+      <RNPickerSelect
+        onValueChange={(value) => setSelectedValue(value)}
+        items={options}
+        style={pickerSelectStyles}
+        placeholder={{ label: 'Select an option...', value: null }}
+        value={selectedValue}
+      />
+      <Text style={styles.selectedText}>Selected: {selectedValue}</Text>
+    </View>
+         
+        }
        
       </View>
       <View style={{alignItems: 'center', padding: 10, backgroundColor: "#f6740c", margin:20}}>
@@ -356,4 +381,26 @@ const styles = StyleSheet.create({
   },
 });
 
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    marginBottom: 20,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    marginBottom: 20,
+  },
+});
 export default Cart;
