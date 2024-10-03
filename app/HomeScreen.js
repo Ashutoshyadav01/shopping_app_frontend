@@ -15,11 +15,14 @@ import {
   Button,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import{getBaseApiUrl} from './CommonFunctions'
 
 const screenWidth = Dimensions.get("window").width;
 const { width } = Dimensions.get('window');
 const itemWidth = screenWidth / 2 - 30;
-const API_URL = "https://akm0505.bsite.net/api/GetInitialSetup/1";
+const API_URL = getBaseApiUrl()+"/api/GetInitialSetup/1";
+
+// console.log(API_URL)
 
 const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
   const [CategoryList, setCategoryList] = useState([]);
   const [storedName, setStoredName] = useState("");
   const [Logo, setLogo] = useState(
-    "https://akm0505.bsite.net/mahakal_logo.jpeg"
+    getBaseApiUrl() +"/mahakal_logo.jpeg"
   );
   const [isLoading, setIsLoading] = useState(true);
 

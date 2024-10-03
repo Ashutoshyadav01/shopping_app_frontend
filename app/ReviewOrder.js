@@ -217,7 +217,7 @@ const Cart = ({ navigation ,route}) => {
           deliveryType==2 &&
           
             <View style={styles.container}>
-      <Text style={styles.label}>Select an Option:</Text>
+      <Text style={styles.label}>Select the payment option:</Text>
       <RNPickerSelect
         onValueChange={(value) => setSelectedValue(value)}
         items={options}
