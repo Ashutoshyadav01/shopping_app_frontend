@@ -14,26 +14,52 @@ const Cart = ({ navigation ,route}) => {
   const freeAmt = 250;
   const [checked, setChecked] = useState('first');
   const items=cartItems.length;
+  const [allAddress,setAllAddress]=useState([]);
   const [defaultAddress,setDefaultAddress]=useState("");
-  const {deliveryType}= route.params;
+  const {deliveryType,addressId}= route.params;
   useFocusEffect(
     React.useCallback(() => {
-      async function getDefaultAddress()
-    {
-    const x= await AsyncStorage.getItem("defaultAddress")
-    if(x)
-    {
-      const parsed=JSON.parse(x);
-      const defaultAddressLine1=parsed.Address;
-      const defaultAddressLine2=parsed.City;
-      const defaultAddressLine3=parsed.State;
+      const fetchAddresses = async () => {
+        const x = await AsyncStorage.getItem("AddressList");
+        if (x) {
+          const parsed = JSON.parse(x);
+          setAllAddress(parsed);
+  
+          // Filter for the address using addressId
+          const setAdd = parsed.filter((item) => item.AddressId === addressId);
+          if (setAdd.length > 0) {
+            const newDefaultAddress = `${setAdd[0].Address || ''}, ${setAdd[0].City || ''}, ${setAdd[0].State || ''}`;
+            // Only update if the address has changed
+            if (newDefaultAddress !== defaultAddress) {
+              setDefaultAddress(newDefaultAddress);
+            }
+          } else {
+            console.log("No address found for the given addressId");
+          }
+        }
+      };
+  
+      const fetchDefaultAddress = async () => {
+        const x = await AsyncStorage.getItem("defaultAddress");
+        if (x) {
+          const parsed = JSON.parse(x);
+          const newDefaultAddress = `${parsed.Address || ''}, ${parsed.City || ''}, ${parsed.State || ''}`;
+          // Only update if the address has changed
+          if (newDefaultAddress !== defaultAddress) {
+            setDefaultAddress(newDefaultAddress);
+          }
+        }
+      };
+  
+      fetchAddresses();
+      fetchDefaultAddress();
+    }, [addressId]) // Added defaultAddress as a dependency
+  );
+  
 
-      setDefaultAddress(`${defaultAddressLine1}, ${defaultAddressLine2}, ${defaultAddressLine3}`);
-    }
-    }
-  getDefaultAddress();
-    }, [])
-  )
+
+
+
   useEffect(() => {
     const loadCartItems = async () => {
       try {
@@ -68,9 +94,7 @@ const Cart = ({ navigation ,route}) => {
     loadCartItems();
   }, []);
 
-//   useEffect(()=>{
-// console.log("shop Address Chnaged", shopAdd)
-//   },[shopAdd])
+
 
   const calculateTotal = () => {
     let total = 0;
@@ -116,17 +140,17 @@ const Cart = ({ navigation ,route}) => {
 
   return (
     <View style={styles.container}>
-      
+      <Text>{addressId}</Text>
       <Text style={styles.heading}>Review Order</Text>
       {cartItems.length === 0 ? (
         <Text>Your cart is empty</Text>
       ) : (
         <>
         <View style={{flexDirection:"row", gap:150}}>
-        <Text style={{marginLeft:10, marginBottom:5 , color:"#f6740c"}}>{(deliveryType==1)?"SHOP ADDRESS":"Default Address"}</Text>
+        <Text style={{marginLeft:10, marginBottom:5 , color:"#f6740c"}}>{(deliveryType==1)?"SHOP ADDRESS":"Delivery Address"}</Text>
        <TouchableOpacity
        onPress={()=>{
-        navigation.navigate("Address")
+        navigation.navigate("ChangeAdd")
        }}
        >
        <Text style={{color:"red"}}> {(deliveryType!=1)?"Change Address":null}</Text>
@@ -169,12 +193,18 @@ const Cart = ({ navigation ,route}) => {
        
       </View>
       <View style={{flexDirection:"row", alignItems:"center",marginTop:10, }}>
+        {
+        deliveryType==1 &&
+        <View style={{flexDirection:"row", alignItems:"center"}}>
         <RadioButton
           value="first"
           status={checked === 'first' ? 'checked' : 'unchecked'}
           onPress={() => setChecked('first')}
         />
         <Text>Cash on Delivery</Text>
+        </View>
+        }
+       
       </View>
       <View style={{alignItems: 'center', padding: 10, backgroundColor: "#f6740c", margin:20}}>
         <Text style={{color:"#fff"}}>BUY NOW</Text>

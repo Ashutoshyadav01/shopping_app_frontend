@@ -15,7 +15,8 @@ import OtpSignin from './OtpSignin';
 import Profile from './Profile';
 import Address from './Address';
 import AddressForm from './AddressForm';
-import ReviewOrder from './ReviewOrder'
+import ReviewOrder from './ReviewOrder';
+import ChangeAdd from './ChangeAdd';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -38,6 +39,9 @@ const App = () => {
         <Stack.Screen name="Address" component={Address}/>
         <Stack.Screen name="AddressForm" component={AddressForm}/>
         <Stack.Screen name='ReviewOrder' component={ReviewOrder}/>
+        <Stack.Screen name='ChangeAdd' component={ChangeAdd}/>
+        
+
       </Stack.Navigator>
     </NavigationContainer>
   );

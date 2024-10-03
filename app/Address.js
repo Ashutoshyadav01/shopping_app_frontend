@@ -106,7 +106,9 @@ useEffect(() => {
   }
   defaultAdd();
 }, [allAddress]);
-
+useState(()=>{
+  
+})
 
  if(allAddress.length!=0)
  {
