@@ -7,16 +7,17 @@ import {
 } from "react-native";
 import { useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-
+import{getBaseApiUrl,SaveOrderHistory} from './CommonFunctions'
 function OtpSignin({ route, navigation }) {
   const { otp, input, name } = route.params; 
   const [enteredOtp, setEnteredOtp] = useState("");
   const [count, setCount] = useState(1);
 
   const handleVerifyOtp = async () => {
+
     if (parseInt(enteredOtp) === otp) {
       try {
-        const response = await fetch("https://akm0505.bsite.net/api/GetCustomerLoginDetail", {
+        const response = await fetch(getBaseApiUrl()+"/api/GetCustomerLoginDetail", {
           method: "POST",
           body: JSON.stringify({
             "CUSTOMER_LOGIN_ID": input,
@@ -35,23 +36,35 @@ function OtpSignin({ route, navigation }) {
         if (json.Table[0].RESPONSE_TYPE === "SUCCESS") {
           const userJson = json.Table1[0];
           const addressList= json.Table2;
+           console.log("orderhistory",json.Table3);
+           console.log("orderDetail",json.Table4)
+           const hexCodes=json.Table3.map((item)=>item.COLOR_HEX_CODE);
+           console.log("hexcode",hexCodes);
+          AsyncStorage.setItem("hexCode",JSON.stringify(hexCodes));
+         
+          SaveOrderHistory(JSON.stringify(json.Table3),JSON.stringify(json.Table4));
+          console.log("All details",json);
           console.log("Address",addressList);
           console.log("user details",userJson);
 
           try {
+           
             await AsyncStorage.setItem("UserProfile", JSON.stringify(userJson)); 
             await AsyncStorage.setItem("AddressList",JSON.stringify(addressList));
+            
             console.log("Stored user details");
           } catch (error) {
             console.log("Error storing name:", error);
           }
 
-          alert(json.Table[0].RESPONSE_MESSAGE);
+          alert("User Successfully logged in");
           navigation.navigate("Home");
         } else {
+         
           alert(json.Table[0].RESPONSE_MESSAGE);
         }
       } catch (error) {
+        alert("Please Register this Mobile Number");
         console.log("Error:", error);
       }
     } else {

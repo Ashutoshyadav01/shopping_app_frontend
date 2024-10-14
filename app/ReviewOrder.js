@@ -5,10 +5,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { RadioButton } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import RNPickerSelect from 'react-native-picker-select';
+import{getBaseApiUrl,SaveOrderHistory} from './CommonFunctions';
+
 
 
 const Cart = ({ navigation ,route}) => {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const {deliveryType,addressId}= route.params;
 
 
   const [cartItems, setCartItems] = useState([]);
@@ -21,20 +23,86 @@ const Cart = ({ navigation ,route}) => {
   const items=cartItems.length;
   const [allAddress,setAllAddress]=useState([]);
   const [defaultAddress,setDefaultAddress]=useState("");
-  const {deliveryType,addressId}= route.params;
-  const options = [
-    { label: 'Cash On delivery', value: 'COD' },
-    { label: 'UPI', value: 'UPI' },
-  ];
+  const [paymentModes, setPaymentModes] = useState([]); // State to store payment modes
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState(null); // State to store the selected payment mode
+  const [userProfile,setUserProfile]=useState({});
+  const [DeliveryAddressId, setDeliveryAddressId]=useState("");
+  const [deliveryCharge,setDeliveryCharge]=useState("")
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Function to fetch the payment modes from the API
+    const fetchPaymentModes = async () => {
+     
+     try {
+      const x=await AsyncStorage.getItem("initialSetup");
+      if(x)
+      {
+        const parsed= JSON.parse(x);
+        
+       setDeliveryCharge(parsed.Table[0].DelieveryCharge);
+      }
+        const response = await fetch(getBaseApiUrl()+"/api/GetInitialSetup/1");
+        const data = await response.json();
+
+        // Assuming that Table1 contains payment modes
+        let modes = data.Table1.map(item => ({
+          label: item.MODE_OF_PAYMENT,
+          value: item.MODE_OF_PAYMENT_ID
+        }));
+        
+      
+        if (deliveryType == 1) {
+          // Reassign modes to a single object in the same structure
+          modes = {
+            label: data.Table1[0].MODE_OF_PAYMENT,
+            
+            value: data.Table1[0].MODE_OF_PAYMENT_ID
+          };
+        }
+   
+    
+
+        setPaymentModes(modes); // Update state with payment modes
+      } catch (error) {
+        console.error("Error fetching payment modes:", error);
+      }
+    };
+    async function getCustomerId()
+    {
+      const x= await AsyncStorage.getItem("UserProfile");
+      if(x)
+      {
+        const parsed= JSON.parse(x)
+        {
+         setUserProfile(parsed)
+     
+        }
+      }
+    }
+ getCustomerId();
+    fetchPaymentModes(); // Call the function to fetch payment modes
+  }, []);
+  
   useFocusEffect(
     React.useCallback(() => {
+    
       const fetchAddresses = async () => {
         const x = await AsyncStorage.getItem("AddressList");
         if (x) {
           const parsed = JSON.parse(x);
           setAllAddress(parsed);
-  
-          // Filter for the address using addressId
+         
+        
+          console.log(addressId)
+
+          if(addressId)
+            {
+             setDeliveryAddressId(addressId);
+            }
+            else{
+              setDeliveryAddressId(parsed[0].AddressId)
+            }
           const setAdd = parsed.filter((item) => item.AddressId === addressId);
           if (setAdd.length > 0) {
             const newDefaultAddress = `${setAdd[0].Address || ''}, ${setAdd[0].City || ''}, ${setAdd[0].State || ''}`;
@@ -52,6 +120,8 @@ const Cart = ({ navigation ,route}) => {
         const x = await AsyncStorage.getItem("defaultAddress");
         if (x) {
           const parsed = JSON.parse(x);
+
+          console.log("default address",parsed)
           const newDefaultAddress = `${parsed.Address || ''}, ${parsed.City || ''}, ${parsed.State || ''}`;
           // Only update if the address has changed
           if (newDefaultAddress !== defaultAddress) {
@@ -59,13 +129,15 @@ const Cart = ({ navigation ,route}) => {
           }
         }
       };
-  
+     
       fetchAddresses();
       fetchDefaultAddress();
     }, [addressId]) // Added defaultAddress as a dependency
   );
   
+useEffect(()=>{
 
+},[])
 
 
 
@@ -97,21 +169,16 @@ const Cart = ({ navigation ,route}) => {
       const AddressLine2= parsed.Table[0].ShopAddressLine2; 
       setShopAdd(`${AddressLine1}, ${AddressLine2}`)
     }
-
+    console.log(userProfile.CustomerFullName)
     
+  // setDeliveryAddressId(addId[0].AddressId)
   getInitialSetup();
     loadCartItems();
   }, []);
 
 
 
-  const calculateTotal = () => {
-    let total = 0;
-    cartItems.forEach((item) => {
-      total += item.price * item.quantity;
-    });
-    return total;
-  };
+  
 
   const applyCoupon = () => {
     if (couponCode === "DISCOUNT10") {
@@ -126,7 +193,73 @@ const Cart = ({ navigation ,route}) => {
       return acc + curr.quantity * curr.price;
     }, 0);
   }
+function BuyNow()
+{
+  const sub_total=calculateTotalPrice();
+  const total_payble=calculateTotalPrice()+19;
+  console.log("total payble",total_payble)
+  console.log(sub_total);
+console.log(cartItems.length)
+const arrProducts=[]
+cartItems.map((item)=>{
+  console.log(item)
+var product={
+    "PRODUCT_ID": item.productId,
+    "QUANTITY_UNIT_ID": item.quantityUnitId,
+    "QUANTITY": item.quantity 
+}
+arrProducts.push(product)
+})
+console.log(arrProducts)
+//  main.js
+ 
+// POST request using fetch()
+fetch(getBaseApiUrl()+"/api/SaveOrder", {
+    
+  // Adding method type
+  method: "POST",
+  
+  // Adding body or contents to send
+  body: JSON.stringify({
+    "CUSTOMER_ID": userProfile.CustomerID,
+    "ProductDetails":arrProducts,
+    "ADDRESS_ID":(deliveryType==1)?-1:DeliveryAddressId,
+    "APPLY_COUPON_CODE": "sample string 2",
+    "SUB_TOTAL": sub_total,
+    "TAX": 4.0,
+    "DELIVERY_CHARGE": deliveryCharge,
+    "TOTAL_PAYABLE": total_payble,
+    "EARNED_POINT": 0,
+    "DELIVERY_TYPE": (deliveryType==1)?1:2,
+    "MODE_OF_PAYMENT": selectedPaymentMode,
+    "DELIVERY_DATE_TIME": "2024-10-03T14:23:04.854399-04:00"
+  }),
+  
+  // Adding headers to the request
+  headers: {
+      "Content-type": "application/json; charset=UTF-8"
+  }
+})
 
+// Converting to JSON
+.then(response =>response.json())
+
+.then((response) => { 
+  console.log("here is the whole response",response)
+  if (response.Table[0].RESPONSE_TYPE == "SUCCESS") {
+    SaveOrderHistory(JSON.stringify(response.Table1),JSON.stringify(response.Table2));
+    alert(response.Table[0].RESPONSE_MESSAGE);
+    AsyncStorage.removeItem("cart")
+    AsyncStorage.removeItem("itemCounts")
+    navigation.navigate("OrderHistory")
+  }
+  
+})
+.catch((error) => {
+  console.log(error);
+});
+
+}
 
   const updateItemCount = async (item, newQuantity) => {
     setCartItems((prevItems) =>
@@ -146,11 +279,21 @@ const Cart = ({ navigation ,route}) => {
     setCartItems(updatedCartItems);
     await AsyncStorage.setItem("cart", JSON.stringify(updatedCartItems));
   };
+  const validate = () => {
+    if (!selectedPaymentMode) {
+      setError('Please select a payment mode');
+    } else {
+      setError('');
+      BuyNow();
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text>{addressId}</Text>
+    
+      
       <Text style={styles.heading}>Review Order</Text>
+    
       {cartItems.length === 0 ? (
         <Text>Your cart is empty</Text>
       ) : (
@@ -202,39 +345,30 @@ const Cart = ({ navigation ,route}) => {
        
       </View>
       <View style={{flexDirection:"row", alignItems:"center",marginTop:10, }}>
-        {
-        deliveryType==1 &&
-        <View style={{flexDirection:"row", alignItems:"center"}}>
-        <RadioButton
-          value="first"
-          status={checked === 'first' ? 'checked' : 'unchecked'}
-          onPress={() => setChecked('first')}
-        />
-        <Text>Cash on Delivery</Text>
-        </View>
-        }
-        {
-          deliveryType==2 &&
+     
           
-            <View style={styles.container}>
-      <Text style={styles.label}>Select the payment option:</Text>
+          <View style={styles.container}>
+      <Text style={styles.label}>Select Payment Mode:</Text>
       <RNPickerSelect
-        onValueChange={(value) => setSelectedValue(value)}
-        items={options}
+        onValueChange={(value) => setSelectedPaymentMode(value)}
+        items={paymentModes}
         style={pickerSelectStyles}
-        placeholder={{ label: 'Select an option...', value: null }}
-        value={selectedValue}
+        placeholder={{ label: 'Select a payment mode...', value: null }}
+        value={selectedPaymentMode}
       />
-      <Text style={styles.selectedText}>Selected: {selectedValue}</Text>
+      {selectedPaymentMode && <Text>Selected Payment Mode ID: {selectedPaymentMode}</Text>}
+      {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}
     </View>
          
-        }
+        
        
       </View>
+<TouchableOpacity onPress={()=>validate()}>
       <View style={{alignItems: 'center', padding: 10, backgroundColor: "#f6740c", margin:20}}>
         <Text style={{color:"#fff"}}>BUY NOW</Text>
-        
       </View>
+</TouchableOpacity>
+      
         
         </>
       )}
@@ -249,6 +383,13 @@ const styles = StyleSheet.create({
   borderColor:"grey",
   borderRadius:20,
   marginBottom:10
+  },
+  container: {
+    padding: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
   },
   container: {
     flex: 1,
@@ -380,7 +521,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
@@ -403,4 +543,5 @@ const pickerSelectStyles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
 export default Cart;

@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 const itemWidth = screenWidth / 2 - 30;
 const API_URL = getBaseApiUrl()+"/api/GetInitialSetup/1";
 
-// console.log(API_URL)
+console.log(API_URL)
 
 const HomeScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,12 +30,12 @@ const HomeScreen = ({ navigation }) => {
   const [CategoryList, setCategoryList] = useState([]);
   const [storedName, setStoredName] = useState("");
   const [Logo, setLogo] = useState(
-    getBaseApiUrl() +"/mahakal_logo.jpeg"
+   ""
   );
   const [isLoading, setIsLoading] = useState(true);
 
   const API_URL_CATAGORYLIST =
-    "https://akm0505.bsite.net/api/GetCategoryList/1";
+    getBaseApiUrl()+"/api/GetCategoryList/1";
     
   const translateX = useRef(new Animated.Value(width)).current; // Start off-screen
 
@@ -99,6 +99,9 @@ const HomeScreen = ({ navigation }) => {
           if (name !== null) {
             const parsedProfile = JSON.parse(name);
             setStoredName(parsedProfile.CustomerFullName); // Set the stored name immediately
+          }
+          else{
+            setStoredName("")
           }
         } catch (error) {
           console.log("Error fetching stored name:", error);
@@ -182,7 +185,16 @@ const HomeScreen = ({ navigation }) => {
 
       <View style={styles.navBar}>
         <Icon name="home-outline" size={30} color="#4CAF50" />
+
+        <TouchableOpacity onPress={()=>{
+          navigation.navigate("OrderHistory")
+        }}>
         <Icon name="clipboard-outline" size={30} color="#4CAF50" />
+        </TouchableOpacity>
+     
+
+
+
         <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
           <Icon name="cart-outline" size={30} color="#4CAF50" />
         </TouchableOpacity>

@@ -14,6 +14,7 @@ const Profile = ({navigation}) => {
     try{
         const profile= await AsyncStorage.getItem("UserProfile")
         const parsed=JSON.parse(profile);
+        
         setName(parsed.CustomerFullName)
         setNumber(parsed.CustomerMobileNumber)
 
@@ -78,6 +79,7 @@ const Profile = ({navigation}) => {
 
 
     <TouchableOpacity onPress={()=>{
+        AsyncStorage.removeItem("UserProfile");
         handleSignOut();
     }}>
     <View style={styles.signOut}>

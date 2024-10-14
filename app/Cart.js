@@ -88,7 +88,18 @@ const Cart = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.heading}>My Cart</Text>
       {cartItems.length === 0 ? (
-        <Text>Your cart is empty</Text>
+        <View style={{justifyContent:"center",
+          alignItems:"center"
+        }}>
+<Image
+source={require("./EmptyCart.png")}
+style={styles.img}
+resizeMode="contain"
+/>
+<Text style={{fontSize:16, fontWeight:"400"}}>Your cart is empty</Text>
+  
+        </View>
+        
       ) : (
         <>
           <FlatList
@@ -180,6 +191,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
+  },
+  img:{
+   justifyContent:"center",
+   alignItems:"center",
+   overflow:"hidden",
+   width:400
   },
   btn:{
     backgroundColor:"#f6740c",

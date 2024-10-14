@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , Suspense } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const API_PRODUCT_LIST = "https://akm0505.bsite.net/api/GetProductList/";
+import{getBaseApiUrl} from './CommonFunctions'
+const API_PRODUCT_LIST = getBaseApiUrl()+"/api/GetProductList/";
 
 const CategoryItemsScreen = ({ route, navigation }) => {
   const { searchQuery, category } = route.params;
@@ -25,6 +25,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       fetch(API_PRODUCT_LIST + category.CategoryId)
         .then((item) => item.json())
         .then((res) => {
+         
           setFilteredItems(res.Table);
           setAllItems(res.Table);
           setCount(res.Table.length);
@@ -77,6 +78,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
       }
 
       await AsyncStorage.setItem("cart", JSON.stringify(cart));
+      
       console.log("Cart updated:", cart);
     } catch (error) {
       console.error("Error storing item in cart:", error);
@@ -194,6 +196,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
                           price: item.ProductSellingPrice,
                           discount: item.discount,
                           image: item.ProductThumbnail,
+                          quantityUnitId:item.QuantityUnitID
                         });
                       } else {
                         console.warn("Invalid productId, cannot add to cart.");
@@ -213,6 +216,7 @@ const CategoryItemsScreen = ({ route, navigation }) => {
           );
         }}
       />
+      
     </View>
   );
 };

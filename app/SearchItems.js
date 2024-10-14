@@ -60,6 +60,7 @@ const SearchItems = ({ navigation, route }) => {
         price: item.ProductSellingPrice,
         discount: item.discount,
         image: item.ProductThumbnail,
+        quantityUnitId:item.QuantityUnitID
       };
 
       const existingCart = await AsyncStorage.getItem("cart");

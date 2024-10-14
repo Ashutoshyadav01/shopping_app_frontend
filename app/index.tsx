@@ -17,6 +17,9 @@ import Address from './Address';
 import AddressForm from './AddressForm';
 import ReviewOrder from './ReviewOrder';
 import ChangeAdd from './ChangeAdd';
+import OrderHistory from './OrderHistory';
+import OrderDeatil from './OrderDetail';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -40,8 +43,9 @@ const App = () => {
         <Stack.Screen name="AddressForm" component={AddressForm}/>
         <Stack.Screen name='ReviewOrder' component={ReviewOrder}/>
         <Stack.Screen name='ChangeAdd' component={ChangeAdd}/>
+        <Stack.Screen name='OrderHistory' component={OrderHistory}/>
         
-
+        <Stack.Screen name='OrderDetail'component={OrderDeatil}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
