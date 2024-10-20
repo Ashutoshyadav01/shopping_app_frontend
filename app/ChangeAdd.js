@@ -46,7 +46,7 @@ export default function ChangeAdd({ navigation }) {
         )}
       />
       <TouchableOpacity style={styles.button} onPress={() => {
-        navigation.navigate("ReviewOrder", { deliveryType: 2, addressId: defaultAddressId });
+        navigation.navigate("Review Order", { deliveryType: 2, addressId: defaultAddressId });
        
       }}>
         <Text style={styles.buttonText}>Change</Text>

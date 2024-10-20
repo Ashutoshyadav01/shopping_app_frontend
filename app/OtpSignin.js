@@ -7,11 +7,12 @@ import {
 } from "react-native";
 import { useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import{getBaseApiUrl,SaveOrderHistory} from './CommonFunctions'
+import{getBaseApiUrl,SaveOrderHistory ,isDevelopmentMode} from './CommonFunctions'
 function OtpSignin({ route, navigation }) {
   const { otp, input, name } = route.params; 
   const [enteredOtp, setEnteredOtp] = useState("");
   const [count, setCount] = useState(1);
+
 
   const handleVerifyOtp = async () => {
 
@@ -22,7 +23,7 @@ function OtpSignin({ route, navigation }) {
           body: JSON.stringify({
             "CUSTOMER_LOGIN_ID": input,
             "CUSTOMER_PASSWORD": "sample string 9",
-            "CUSTOMER_ROLE_ID": 0,
+            "ROLE_TYPE": "CUSTOMER",
             "SHOP_ID": 1,
             "OAUTH_TOKEN": "sample string 5"
           }),
@@ -78,9 +79,10 @@ function OtpSignin({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Your OTP is: {otp}</Text>
+      
       <Text style={styles.text}>
-        {name}: CHECK YOUR MOB NO: {input}
+        {isDevelopmentMode()?otp:""}
+       Please check your mobile number({input}) for OTP
       </Text>
       <TextInput
         style={styles.input}

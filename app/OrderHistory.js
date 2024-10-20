@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet, TouchableOpacity} from 'react-native'
+import { View, Text,StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native'
 import React, { useState } from 'react'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatList } from 'react-native-gesture-handler';
@@ -31,13 +31,12 @@ orderHistory();
 
 
   return (
-    <View>
-    <Text>{hexCode.map(item=>item)}</Text>
+    <SafeAreaView>
       <FlatList
       data={orderList}
       keyExtractor={item=>item.ORDER_NUMBER}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={()=>navigation.navigate("OrderDetail",{orderId:item.OrderID,orderNo:item.ORDER_NUMBER,orderStatus:item.OrderStatus,deliveryType:item.DELIVERY_TYPE,mop:item.MODE_OF_PAYMENT,subTotal:item.SUB_TOTAL,tax:item.TAX,totalPayble:item.TOTAL_PAYABLE})}>
+        <TouchableOpacity onPress={()=>navigation.navigate("Order Detail",{orderId:item.OrderID,orderNo:item.ORDER_NUMBER,orderStatus:item.OrderStatus,deliveryType:item.DELIVERY_TYPE,mop:item.MODE_OF_PAYMENT,subTotal:item.SUB_TOTAL,tax:item.TAX,totalPayble:item.TOTAL_PAYABLE})}>
 
 <View style={styles.container}>
       <Text style={styles.orderNumber}>Order Number: {item.ORDER_NUMBER}</Text>
@@ -55,7 +54,7 @@ orderHistory();
   )}
       />
     
-    </View>
+    </SafeAreaView>
   )
 }
 const styles=StyleSheet.create(

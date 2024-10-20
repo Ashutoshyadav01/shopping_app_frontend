@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { RadioButton } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import RNPickerSelect from 'react-native-picker-select';
-import{getBaseApiUrl,SaveOrderHistory} from './CommonFunctions';
+import{getBaseApiUrl,SaveOrderHistory,isDevelopmentMode} from './CommonFunctions';
 
 
 
@@ -24,7 +24,7 @@ const Cart = ({ navigation ,route}) => {
   const [allAddress,setAllAddress]=useState([]);
   const [defaultAddress,setDefaultAddress]=useState("");
   const [paymentModes, setPaymentModes] = useState([]); // State to store payment modes
-  const [selectedPaymentMode, setSelectedPaymentMode] = useState(null); // State to store the selected payment mode
+  const [selectedPaymentMode, setSelectedPaymentMode] = useState(1); // State to store the selected payment mode
   const [userProfile,setUserProfile]=useState({});
   const [DeliveryAddressId, setDeliveryAddressId]=useState("");
   const [deliveryCharge,setDeliveryCharge]=useState("")
@@ -52,14 +52,14 @@ const Cart = ({ navigation ,route}) => {
         }));
         
       
-        if (deliveryType == 1) {
-          // Reassign modes to a single object in the same structure
-          modes = {
-            label: data.Table1[0].MODE_OF_PAYMENT,
+        // if (deliveryType == 1) {
+        //   // Reassign modes to a single object in the same structure
+        //   modes = {
+        //     label: data.Table1[0].MODE_OF_PAYMENT,
             
-            value: data.Table1[0].MODE_OF_PAYMENT_ID
-          };
-        }
+        //     value: data.Table1[0].MODE_OF_PAYMENT_ID
+        //   };
+        // }
    
     
 
@@ -170,12 +170,15 @@ useEffect(()=>{
       setShopAdd(`${AddressLine1}, ${AddressLine2}`)
     }
     console.log(userProfile.CustomerFullName)
-    
+
   // setDeliveryAddressId(addId[0].AddressId)
   getInitialSetup();
     loadCartItems();
   }, []);
 
+  useEffect(()=>{
+    console.log("here are the payment modes",paymentModes)
+  },[paymentModes])
 
 
   
@@ -261,24 +264,9 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
 
 }
 
-  const updateItemCount = async (item, newQuantity) => {
-    setCartItems((prevItems) =>
-      prevItems.map((cartItem) =>
-        cartItem.productId === item.productId
-          ? { ...cartItem, quantity: newQuantity }
-          : cartItem
-      )
-    );
-    const updatedCounts = { ...itemCounts, [item.name]: newQuantity };
-    setItemCounts(updatedCounts);
-    await AsyncStorage.setItem("itemCounts", JSON.stringify(updatedCounts));
-  };
+  
 
-  const removeFromCart = async (item) => {
-    const updatedCartItems = cartItems.filter((cartItem) => cartItem.productId !== item.productId);
-    setCartItems(updatedCartItems);
-    await AsyncStorage.setItem("cart", JSON.stringify(updatedCartItems));
-  };
+
   const validate = () => {
     if (!selectedPaymentMode) {
       setError('Please select a payment mode');
@@ -288,11 +276,12 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
     }
   };
 
+
   return (
     <View style={styles.container}>
     
       
-      <Text style={styles.heading}>Review Order</Text>
+     
     
       {cartItems.length === 0 ? (
         <Text>Your cart is empty</Text>
@@ -313,7 +302,7 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
          <Text style={{flex:1, fontWeight:"500", margin:10}}>{(deliveryType==1)?shopAdd:defaultAddress}</Text>
          </View>
          
-          <FlatList
+           <FlatList
             data={cartItems}
             keyExtractor={(item) => item.productId.toString()}
             renderItem={({ item }) => (
@@ -323,20 +312,14 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
                   <Text style={styles.cartItemName}>{item.name}</Text>
                   <Text style={styles.cartItemPrice}>₹{item.price}</Text>
                   <View style={styles.quantityActions}>
-                    <TouchableOpacity onPress={() => updateItemCount(item, item.quantity + 1)}>
-                      <Icon name="plus-circle" size={24} color="green" />
-                    </TouchableOpacity>
-                    <Text style={styles.quantityText}>{item.quantity}</Text>
-                    <TouchableOpacity
-                      onPress={() => item.quantity > 1 ? updateItemCount(item, item.quantity - 1) : removeFromCart(item)}
-                    >
-                      <Icon name="minus-circle" size={24} color="red" />
-                    </TouchableOpacity>
+                 
+                    <Text style={styles.quantityText}>quantity: {item.quantity}</Text>
+                
                   </View>
                 </View>
               </View>
             )}
-          />
+          /> 
         
           <View style={styles.bill}>
 
@@ -344,25 +327,59 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
           <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() + 19}</Text>
        
       </View>
+     
       <View style={{flexDirection:"row", alignItems:"center",marginTop:10, }}>
      
           
           <View style={styles.container}>
       <Text style={styles.label}>Select Payment Mode:</Text>
-      <RNPickerSelect
+      <FlatList
+   data={paymentModes}
+   keyExtractor={(item) => item.value}
+   numColumns={2} 
+   renderItem={({item}) => (
+
+    <TouchableOpacity onPress={() => setSelectedPaymentMode(item.value)}>
+    <View style={{ flex: 1, flexDirection: "row", width: "100%" }}>
+      <Text
+        style={{
+          width: 150,
+          marginLeft: 5,
+          marginBottom: 20,
+          padding: 6,
+          borderWidth: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: selectedPaymentMode === item.value ? "green" : "white", // Set background color conditionally
+          color:selectedPaymentMode==item.value?"white":"black",
+          borderRadius:10
+        }}
+      >
+        {item.label}
+      </Text>
+    </View>
+  </TouchableOpacity>
+  
+    
+   )}
+/>
+
+      {/* <RNPickerSelect
         onValueChange={(value) => setSelectedPaymentMode(value)}
         items={paymentModes}
         style={pickerSelectStyles}
         placeholder={{ label: 'Select a payment mode...', value: null }}
         value={selectedPaymentMode}
-      />
-      {selectedPaymentMode && <Text>Selected Payment Mode ID: {selectedPaymentMode}</Text>}
+      /> */}
+      
+      {selectedPaymentMode && isDevelopmentMode() && <Text>Selected Payment Mode ID: {selectedPaymentMode}</Text>}
       {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}
     </View>
          
         
        
       </View>
+        
 <TouchableOpacity onPress={()=>validate()}>
       <View style={{alignItems: 'center', padding: 10, backgroundColor: "#f6740c", margin:20}}>
         <Text style={{color:"#fff"}}>BUY NOW</Text>
@@ -471,6 +488,7 @@ const styles = StyleSheet.create({
   quantityText: {
     marginHorizontal: 12,
     fontSize: 16,
+    fontWeight:"600"
   },
   couponSection: {
     flexDirection: "row",

@@ -83,6 +83,42 @@ const Cart = ({ navigation }) => {
     setCartItems(updatedCartItems);
     await AsyncStorage.setItem("cart", JSON.stringify(updatedCartItems));
   };
+  async function handlePickup() {
+    try {
+      // Remove the UserProfile item
+     
+  
+      // Get the updated value of UserProfile (after removal)
+      const x = await AsyncStorage.getItem("UserProfile");
+  
+      if (x) {
+        navigation.navigate("Review Order", {deliveryType: btn1})
+      }
+      else{
+        navigation.navigate("SignUp")
+      }
+    } catch (error) {
+      console.error("Error handling pickup:", error);
+    }
+  }
+  async function handleDeliver() {
+    try {
+      // Remove the UserProfile item
+     
+  
+      // Get the updated value of UserProfile (after removal)
+      const x = await AsyncStorage.getItem("UserProfile");
+  
+      if (x) {
+        navigation.navigate("Review Order", {deliveryType: btn2})
+      }
+      else{
+        navigation.navigate("SignUp")
+      }
+    } catch (error) {
+      console.error("Error handling pickup:", error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -168,10 +204,10 @@ resizeMode="contain"
           </View>
           {/* Pickup and Deliver Buttons */}
           <View style={styles.BtnView}>
-            <TouchableOpacity onPress={() => navigation.navigate("ReviewOrder", {deliveryType: btn1})}>
+            <TouchableOpacity onPress={() => handlePickup()}>
               <Text style={styles.btn}>PICKUP</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("ReviewOrder", {deliveryType: btn2})}>
+            <TouchableOpacity onPress={() => handleDeliver()}>
               <Text style={styles.btn}>DELIVER</Text>
             </TouchableOpacity>
           </View>

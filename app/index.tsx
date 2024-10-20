@@ -41,11 +41,11 @@ const App = () => {
         <Stack.Screen name="Profile" component={Profile}/>
         <Stack.Screen name="Address" component={Address}/>
         <Stack.Screen name="AddressForm" component={AddressForm}/>
-        <Stack.Screen name='ReviewOrder' component={ReviewOrder}/>
+        <Stack.Screen name='Review Order' component={ReviewOrder}/>
         <Stack.Screen name='ChangeAdd' component={ChangeAdd}/>
         <Stack.Screen name='OrderHistory' component={OrderHistory}/>
         
-        <Stack.Screen name='OrderDetail'component={OrderDeatil}/>
+        <Stack.Screen name='Order Detail'component={OrderDeatil}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

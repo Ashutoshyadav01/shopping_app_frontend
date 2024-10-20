@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 function Otp({ route, navigation }) {
   const { otp, input, name } = route.params; // Retrieve the OTP from the previous screen
   const [enteredOtp, setEnteredOtp] = useState("");
@@ -31,7 +32,7 @@ function Otp({ route, navigation }) {
         // Adding body or contents to send
         body: JSON.stringify({
           CUSTOMER_ID: 1,
-          CUSTOMER_ROLE_ID: 2,
+          ROLE_TYPE: "CUSTOMER",
           CUSTOMER_ROLE_TYPE: "sample string 3",
           IS_SHOP_OWNER: true,
           SHOP_ID: 1,

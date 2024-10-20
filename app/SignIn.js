@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useState } from "react";
+import{getBaseApiUrl,isDevelopmentMode} from './CommonFunctions';
 
 function SignIn({ navigation }) {
   const screen = Dimensions.get("window").width;
@@ -34,7 +35,40 @@ function SignIn({ navigation }) {
           disabled={isButtonDisabled}
           onPress={() => {
             const otp = randomNum();
-            navigation.navigate("OtpSignin", { otp, input });
+           
+             if(isDevelopmentMode()==true)
+            {
+              navigation.navigate("OtpSignin", { otp, input });
+            }
+            else{
+              const response =  fetch(getBaseApiUrl()+"/api/CustomerLoginOTP", {
+                method: "POST",
+                body: JSON.stringify({
+                  "MOBILE_NUMBER": input,
+                  "OTP": otp
+                }),
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                },
+              })
+              .then((response) => response.json())
+  
+              // Displaying results to console
+              .then((json) =>{
+                if(json.state=="SUBMIT_ACCEPTED")
+                {
+                  console.log("otp response",json)
+                  navigation.navigate("OtpSignin", { otp, input });
+                }
+                else{
+    alert("Sorry! OTP cannot be send due to some internal error. Please try again after sometime")
+                }
+               
+              });
+            }
+            //});
+            
+           
           }}
         >
           <Text style={styles.buttonText}>Request OTP</Text>

@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "app",
+    "name": "Dukaanlelo.com",
     "slug": "app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo-color.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/logo-color.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.app"
     },
     "android": {
+      "label": "Dukaanlelo.com",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -35,8 +37,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "d3102100-1715-452a-8635-31e27a94617c"
+        "projectId": "52a4b084-7fdc-41c0-8ead-e2d55560bb24"
       }
-    }
+    },
+    "owner": "ashutosh.yadav01"
   }
 }

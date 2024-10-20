@@ -1,22 +1,26 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image,SafeAreaView } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFocusEffect } from "@react-navigation/native";
 const Address = ({navigation}) => {
   const [name, setname] = useState("");
   const [number, setNumber] = useState("");
-  const getName=async()=>{
-    const localStorage = await AsyncStorage.getItem("UserProfile");
-    if(localStorage)
-    {
-      const parsedData=JSON.parse(localStorage)
-      setname(parsedData.CustomerFullName);
-      setNumber(parsedData.CustomerMobileNumber);
+  useEffect(()=>{
+    const getName=async()=>{
+      const localStorage = await AsyncStorage.getItem("UserProfile");
+      if(localStorage)
+      {
+        const parsedData=JSON.parse(localStorage)
+        setname(parsedData.CustomerFullName);
+        setNumber(parsedData.CustomerMobileNumber);
+      }
+  
     }
-
-  }
+    getName();
+  },[])
+ 
 
  const [allAddress,setAllAddress]=useState([]);
 
@@ -30,7 +34,7 @@ const Address = ({navigation}) => {
      body: JSON.stringify({
        "CUSTOMER_LOGIN_ID": loginId,
        "CUSTOMER_PASSWORD": "sample string 9",
-       "CUSTOMER_ROLE_ID": 0,
+       "ROLE_TYPE": "CUSTOMER",
        "SHOP_ID": 1,
        "OAUTH_TOKEN": "sample string 5"
      }),
@@ -113,7 +117,7 @@ useState(()=>{
  if(allAddress.length!=0)
  {
   return (
-    <View style={{flex: 1, backgroundColor:"#fff"}}>
+    <SafeAreaView style={{flex: 1, backgroundColor:"#fff"}}>
       {console.log("123")}
    
  
@@ -227,25 +231,34 @@ console.log("calling end");
 
       </TouchableOpacity>
       
-    </View>
+    </SafeAreaView>
   );
 }
     
  else{
   return(
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
           <Image style={styles.itemImage} source={require("./address.png")} />
         <Text style={{fontWeight:"600",marginTop:10}}>You haven't Added any Address Yet</Text>
         <Text style={{marginTop:10}}>Add address for superior shopping experience</Text>
         <TouchableOpacity onPress={()=>{
-           navigation.navigate("AddressForm")
+          navigation.navigate("AddressForm",{
+            id:-1,
+            p_name:name,
+            phone_no:number,
+            addrs:"",
+            p_city:"",
+            pin:"",
+            p_state:"",
+            p_default:true
+          })
         }}>
             <View style={styles.btn}>
             <Text style={{color:"#fff", fontWeight:'600'}}>Add Address</Text>
             </View>
        
         </TouchableOpacity>
-        </View>
+        </SafeAreaView>
       );
   
   

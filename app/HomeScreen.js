@@ -272,7 +272,7 @@ loadingContainer:{
     textDecorationLine: "underline",
   },
   marqueeText: {
-    fontSize: 24,
+    fontSize: 20,
     color: "black",
     paddingRight: 50,
   },

@@ -26,7 +26,7 @@ export default function AddressForm({ navigation, route }) {
       body: JSON.stringify({
         CUSTOMER_LOGIN_ID: loginId,
         CUSTOMER_PASSWORD: "sample string 9",
-        CUSTOMER_ROLE_ID: 0,
+        ROLE_TYPE: "CUSTOMER",
         SHOP_ID: 1,
         OAUTH_TOKEN: "sample string 5",
       }),

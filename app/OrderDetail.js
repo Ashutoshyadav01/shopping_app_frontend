@@ -40,7 +40,7 @@ export default function OrderDetail({ route }) {
 
   return (
     <View style={styles.container}>
-       <Text style={styles.title}>ORDER DETAIL</Text>
+    
       <View style={styles.orderDetailSection}>
        
 <View>
