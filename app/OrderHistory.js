@@ -6,6 +6,7 @@ import { FlatList } from 'react-native-gesture-handler';
 const OrderHistory = ({navigation}) => {
   const [orderList,setOrderList]=useState([])
   const [hexCode,setHexCode]=useState([])
+  const date= new Date();
 useState(()=>{
 async function orderHistory()
 {
@@ -32,6 +33,7 @@ orderHistory();
 
   return (
     <SafeAreaView>
+     
       <FlatList
       data={orderList}
       keyExtractor={item=>item.ORDER_NUMBER}
@@ -46,12 +48,13 @@ orderHistory();
       <Text style={styles.payment}>Payment Method: {item.MODE_OF_PAYMENT}</Text>
       <Text style={styles.total}>Total Payable: ₹{item.TOTAL_PAYABLE}</Text>
       <Text style={[styles.status,{ color: hexCode[0] }]}>Status: {item.OrderStatus}</Text>
-   
+  
       
     </View>
         </TouchableOpacity>
     
   )}
+  
       />
     
     </SafeAreaView>

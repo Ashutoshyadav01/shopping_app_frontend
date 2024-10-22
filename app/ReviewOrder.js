@@ -197,6 +197,7 @@ useEffect(()=>{
   }
 function BuyNow()
 {
+  const date= new Date();
   const sub_total=calculateTotalPrice();
   const total_payble=calculateTotalPrice()+19;
   console.log("total payble",total_payble)
@@ -234,7 +235,7 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
     "EARNED_POINT": 0,
     "DELIVERY_TYPE": (deliveryType==1)?1:2,
     "MODE_OF_PAYMENT": selectedPaymentMode,
-    "DELIVERY_DATE_TIME": "2024-10-03T14:23:04.854399-04:00"
+    "DELIVERY_DATE_TIME": date.toISOString()
   }),
   
   // Adding headers to the request
