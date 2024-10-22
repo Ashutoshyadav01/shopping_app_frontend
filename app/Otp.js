@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import{getBaseApiUrl,SaveOrderHistory ,isDevelopmentMode} from './CommonFunctions'
 
 
 function Otp({ route, navigation }) {
@@ -86,7 +87,8 @@ function Otp({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Your OTP is:{otp}</Text>
+      {isDevelopmentMode()==true? <Text style={styles.text}>Your OTP is:{otp}</Text>:<Text></Text>}
+     
       <Text style={styles.text}>
         {name}: CHECK YOUR MOB NO:{input}
       </Text>

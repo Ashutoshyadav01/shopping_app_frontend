@@ -8,7 +8,6 @@ const Cart = ({ navigation }) => {
   const [itemCounts, setItemCounts] = useState({});
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const freeAmt = 250;
   const btn1 = 1;
   const btn2 = 2;
 
@@ -195,7 +194,7 @@ resizeMode="contain"
             </View>
             <View style={styles.total}>
               <Text>Delivery Charge</Text>
-              <Text style={{ fontWeight: "500" }}>{calculateTotalPrice() < freeAmt ? "₹19" : "Free delivery"}</Text>
+              <Text style={{ fontWeight: "500" }}>{calculateTotalPrice()  ? "₹19" : "Free delivery"}</Text>
             </View>
             <View style={styles.total}>
               <Text>Payable</Text>

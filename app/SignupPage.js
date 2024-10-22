@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import{getBaseApiUrl,isDevelopmentMode} from './CommonFunctions'
 function SignUpPage({ navigation }) {
     const [input, setInput] = useState("");
     const [name,setName]=useState("")
@@ -15,14 +15,40 @@ function SignUpPage({ navigation }) {
     }
 
     const isButtonDisabled = input.length !== 10;
-
     const handleSignup = async () => {
         const otp = randomNum();
-    
-       console.log(name)
-        navigation.navigate("Otp", { otp, input,name });
-    };
-    
+      
+        if (isDevelopmentMode() === true) {
+          navigation.navigate("Otp", { otp, input, name });
+        } else {
+          try {
+            const response = await fetch(getBaseApiUrl() + "/api/CustomerLoginOTP", {
+              method: "POST",
+              body: JSON.stringify({
+                MOBILE_NUMBER: input,
+                OTP: otp,
+              }),
+              headers: {
+                "Content-type": "application/json; charset=UTF-8",
+              },
+            });
+      
+            const json = await response.json();
+      
+            if (json.state === "SUBMIT_ACCEPTED") {
+              console.log("OTP response", json);
+              navigation.navigate("Otp", { otp, input, name });
+            } else {
+              alert("Sorry! OTP cannot be sent due to some internal error. Please try again after some time.");
+            }
+          } catch (error) {
+            console.log("Error sending OTP:", error);
+            alert("There was an issue with the request. Please try again later.");
+          }
+        }
+      
+        console.log(name);
+      };
 
     return (
         <View style={styles.container}>

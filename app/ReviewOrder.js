@@ -18,7 +18,6 @@ const Cart = ({ navigation ,route}) => {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const[shopAdd,setShopAdd]= useState("");
-  const freeAmt = 250;
   const [checked, setChecked] = useState('first');
   const items=cartItems.length;
   const [allAddress,setAllAddress]=useState([]);
@@ -267,13 +266,40 @@ fetch(getBaseApiUrl()+"/api/SaveOrder", {
   
 
 
-  const validate = () => {
-    if (!selectedPaymentMode) {
-      setError('Please select a payment mode');
-    } else {
-      setError('');
-      BuyNow();
-    }
+   async function validate(){
+    
+  const x= await AsyncStorage.getItem("defaultAddress");
+  
+ if(x){
+  if (!selectedPaymentMode) {
+    setError('Please select a payment mode');
+  } else {
+    setError('');
+    BuyNow();
+  }
+ }
+ else if(deliveryType==1)
+ {
+  if (!selectedPaymentMode) {
+    setError('Please select a payment mode');
+  } else {
+    setError('');
+    BuyNow();
+  }
+ }
+ else{
+  setError("please select the Any Address Address")
+  navigation.navigate("AddressForm",{
+    id:-1,
+    p_name:"",
+    phone_no:"",
+    addrs:"",
+    p_city:"",
+    pin:"",
+    p_state:"",
+    p_default:true
+  })
+} 
   };
 
 
