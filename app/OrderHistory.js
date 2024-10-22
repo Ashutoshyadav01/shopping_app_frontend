@@ -38,7 +38,7 @@ orderHistory();
       data={orderList}
       keyExtractor={item=>item.ORDER_NUMBER}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={()=>navigation.navigate("Order Detail",{orderId:item.OrderID,orderNo:item.ORDER_NUMBER,orderStatus:item.OrderStatus,deliveryType:item.DELIVERY_TYPE,mop:item.MODE_OF_PAYMENT,subTotal:item.SUB_TOTAL,tax:item.TAX,totalPayble:item.TOTAL_PAYABLE})}>
+        <TouchableOpacity onPress={()=>navigation.navigate("Order Detail",{orderId:item.OrderID,orderNo:item.ORDER_NUMBER,orderStatus:item.OrderStatus,deliveryType:item.DELIVERY_TYPE,mop:item.MODE_OF_PAYMENT,subTotal:item.SUB_TOTAL,tax:item.TAX,totalPayble:item.TOTAL_PAYABLE,orderDate:item.DeliveryDate})}>
 
 <View style={styles.container}>
       <Text style={styles.orderNumber}>Order Number: {item.ORDER_NUMBER}</Text>
@@ -48,7 +48,7 @@ orderHistory();
       <Text style={styles.payment}>Payment Method: {item.MODE_OF_PAYMENT}</Text>
       <Text style={styles.total}>Total Payable: ₹{item.TOTAL_PAYABLE}</Text>
       <Text style={[styles.status,{ color: hexCode[0] }]}>Status: {item.OrderStatus}</Text>
-  
+  <Text style={{color:"green"}}>{item.DeliveryDate}</Text>
       
     </View>
         </TouchableOpacity>

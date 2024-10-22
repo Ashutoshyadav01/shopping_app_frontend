@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OrderDetail({ route }) {
-  const { orderId, orderNo, orderStatus, deliveryType, mop, subTotal, tax, totalPayble } = route.params;
+  const { orderId, orderNo, orderStatus, deliveryType, mop, orderDate,subTotal, tax, totalPayble } = route.params;
   const [products, setProducts] = useState([]);
   const [allItem, setAllItem] = useState([]);
 
@@ -74,6 +74,11 @@ export default function OrderDetail({ route }) {
           <Text style={styles.detailLabel}>Mode of Payment:</Text>
           <Text style={styles.detailValue}>{mop}</Text>
         </View>
+        <View style={styles.detailSection}>
+          <Text style={styles.detailLabel}>Order Date:</Text>
+          <Text style={styles.detailValue}>{orderDate}</Text>
+        </View>
+
 
 
 </View>
