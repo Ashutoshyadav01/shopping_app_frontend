@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getBaseApiUrl=()=>
 {
-    return "https://akm0505.bsite.net";
+    return "https://dukanlelo.com/";
 }
 export async function SaveOrderHistory(orderHistory,orderDetail)
 {

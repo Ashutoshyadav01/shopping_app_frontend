@@ -117,7 +117,7 @@ const SearchItems = ({ navigation, route }) => {
       {filteredItems.length > 0 ? (
         <FlatList
           data={filteredItems}
-          keyExtractor={(item) => item.ProductId.toString()} // Convert ProductId to string
+          keyExtractor={(item) => item.ProductId.toString()} 
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { item })}>
               <View style={styles.itemContainer}>
