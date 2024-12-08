@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image,SafeAreaView } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useFocusEffect } from "@react-navigation/native";
+import { getBaseApiUrl } from "./CommonFunctions";
 const Address = ({navigation}) => {
   const [name, setname] = useState("");
   const [number, setNumber] = useState("");
@@ -29,7 +30,7 @@ const Address = ({navigation}) => {
    const profile= await AsyncStorage.getItem("UserProfile")
    const parsed=JSON.parse(profile);
    const loginId=parsed.CustomerMobileNumber;
-   const response = await fetch("https://akm0505.bsite.net/api/GetCustomerLoginDetail", {
+   const response = await fetch(getBaseApiUrl()+"/api/GetCustomerLoginDetail", {
      method: "POST",
      body: JSON.stringify({
        "CUSTOMER_LOGIN_ID": loginId,
@@ -154,7 +155,7 @@ useState(()=>{
              //  main.js
  
 // POST request using fetch()
-fetch("https://akm0505.bsite.net/api/CustomerAddressDelete", {
+fetch(getBaseApiUrl()+"/api/CustomerAddressDelete", {
     
   // Adding method type
   method: "POST",

@@ -26,7 +26,7 @@ function Otp({ route, navigation }) {
         console.log("Error storing name:", error);
       }
       // POST request using fetch()
-      fetch("https://akm0505.bsite.net/api/CustomerRegisteration", {
+      fetch(getBaseApiUrl()+"/api/CustomerRegisteration", {
         // Adding method type
         method: "POST",
 
@@ -59,9 +59,10 @@ function Otp({ route, navigation }) {
       })
         // Converting to JSON
         .then((response) => response.json())
-
+     
         // Displaying results to console
         .then((json) =>{
+          console.log(json)
           if(json.RESPONSE_TYPE=="SUCCESS")
           {
             alert(json.RESPONSE_MESSAGE);

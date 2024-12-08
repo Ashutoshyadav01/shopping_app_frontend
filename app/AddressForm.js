@@ -4,6 +4,7 @@ import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { RadioButton } from "react-native-paper";
+import { getBaseApiUrl } from "./CommonFunctions";
 
 export default function AddressForm({ navigation, route }) {
   const { pin, p_name, phone_no, addrs, p_city, p_state, p_default, id } = route.params;
@@ -21,7 +22,7 @@ export default function AddressForm({ navigation, route }) {
     const profile = await AsyncStorage.getItem("UserProfile");
     const parsed = JSON.parse(profile);
     const loginId = parsed.CustomerMobileNumber;
-    const response = fetch("https://akm0505.bsite.net/api/GetCustomerLoginDetail", {
+    const response = fetch(getBaseApiUrl()+"/api/GetCustomerLoginDetail", {
       method: "POST",
       body: JSON.stringify({
         CUSTOMER_LOGIN_ID: loginId,
@@ -85,7 +86,7 @@ export default function AddressForm({ navigation, route }) {
   };
 
   function SaveData() {
-    fetch("https://akm0505.bsite.net/api/CustomerAddressAdd", {
+    fetch(getBaseApiUrl()+"/api/CustomerAddressAdd", {
       method: "POST",
       body: JSON.stringify({
         ADDRESS_ID: id,

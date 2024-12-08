@@ -9,12 +9,13 @@ import {
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getBaseApiUrl } from "./CommonFunctions";
 
 const SearchItems = ({ navigation, route }) => {
   const { searchQuery } = route.params;
   const [filteredItems, setFilteredItems] = useState([]);
   const [itemCounts, setItemCounts] = useState({});
-  const Search_URL = "https://akm0505.bsite.net/api/GetProductSearch/aas";
+  const Search_URL = getBaseApiUrl()+"/api/GetProductSearch/aas";
   const [item, setItem] = useState([]);
 
   useEffect(() => {

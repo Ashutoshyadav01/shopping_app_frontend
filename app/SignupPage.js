@@ -34,7 +34,7 @@ function SignUpPage({ navigation }) {
             });
       
             const json = await response.json();
-      
+            console.log(json);
             if (json.state === "SUBMIT_ACCEPTED") {
               console.log("OTP response", json);
               navigation.navigate("Otp", { otp, input, name });
